@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Jogo da velha para duas pessoas no mesmo navegador.">
+  <meta name="theme-color" content="#f5f2ea">
+  <title>Jogo da Velha — Tic Tac Toe</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#board">Ir para o tabuleiro</a>
+
+  <header class="site-header">
+    <div class="page-width header-content">
+      <a class="brand" href="#" aria-label="Jogo da Velha, início">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M9 3.5v17M15 3.5v17M3.5 9h17M3.5 15h17" />
+          </svg>
+        </span>
+        <span>Jogo da <span class="brand-accent">Velha</span><small>TIC TAC TOE</small></span>
+      </a>
+      <p class="header-note">
+        <span class="mark-text mark-text--x" aria-hidden="true">X</span>
+        contra
+        <span class="mark-text mark-text--o" aria-hidden="true">O</span>
+        <span class="header-note-detail">· duas pessoas, um navegador</span>
+      </p>
+    </div>
+  </header>
+
+  <main class="page-width game-layout">
+    <section class="setup-panel" aria-labelledby="setupTitle">
+      <p class="eyebrow">NOVA PARTIDA</p>
+      <h1 id="setupTitle">Quem vai jogar?</h1>
+      <p class="setup-description">Escolham os nomes. Quem fica com o <strong>X</strong> começa.</p>
+
+      <form id="playersForm" class="players-form">
+        <div class="form-field">
+          <label for="playerXInput">
+            <span class="mark-badge mark-badge--x" aria-hidden="true">X</span>
+            Jogador do X
+          </label>
+          <input id="playerXInput" name="playerX" type="text" placeholder="Ex.: Ana" maxlength="20" autocomplete="off">
+        </div>
+
+        <p class="versus" aria-hidden="true">vs</p>
+
+        <div class="form-field">
+          <label for="playerOInput">
+            <span class="mark-badge mark-badge--o" aria-hidden="true">O</span>
+            Jogador do O
+          </label>
+          <input id="playerOInput" name="playerO" type="text" placeholder="Ex.: Bruno" maxlength="20" autocomplete="off">
+        </div>
+
+        <button id="startGame" class="button button--primary" type="submit">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+          </svg>
+          Começar partida
+        </button>
+      </form>
+
+      <ol class="rules" aria-label="Como jogar">
+        <li>Na sua vez, escolha uma casa vazia.</li>
+        <li>Alinhe três marcas na linha, na coluna ou na diagonal.</li>
+        <li>Tabuleiro cheio sem vencedor: deu velha.</li>
+      </ol>
+    </section>
+
+    <section class="game-panel" aria-labelledby="gameTitle">
+      <h2 id="gameTitle" class="visually-hidden">Partida</h2>
+
+      <!-- data-active="true" destaca de quem é a vez. -->
+      <div class="scoreboard">
+        <article id="playerXCard" class="player-card player-card--x" data-active="false">
+          <span class="mark-badge mark-badge--x" aria-hidden="true">X</span>
+          <div class="player-info">
+            <h3 id="playerXName" class="player-name">Jogador X</h3>
+            <p class="player-score">Vitórias: <span id="playerXScore">0</span></p>
+          </div>
+          <span class="turn-pill" aria-hidden="true">Vez</span>
+        </article>
+
+        <p class="tie-card">Empates: <span id="tieScore">0</span></p>
+
+        <article id="playerOCard" class="player-card player-card--o" data-active="false">
+          <span class="mark-badge mark-badge--o" aria-hidden="true">O</span>
+          <div class="player-info">
+            <h3 id="playerOName" class="player-name">Jogador O</h3>
+            <p class="player-score">Vitórias: <span id="playerOScore">0</span></p>
+          </div>
+          <span class="turn-pill" aria-hidden="true">Vez</span>
+        </article>
+      </div>
+
+      <p id="gameStatus" class="game-status" role="status">Digite os nomes e clique em Começar partida.</p>
+
+      <!--
+        Cada casa corresponde a uma posição do array do tabuleiro (data-index de 0 a 8).
+        Você pode atualizar estes botões ou recriá-los a partir do array, como no laboratório 4.
+        O CSS reconhece: data-mark="X" ou "O" na casa, data-win="true" nas casas da linha vencedora
+        e, como extra opcional, data-turn="X" ou "O" no #board para mostrar uma prévia ao passar o mouse.
+      -->
+      <div id="board" class="board" role="group" aria-label="Tabuleiro" tabindex="-1">
+        <button type="button" data-index="0" aria-label="Linha 1, coluna 1" disabled></button>
+        <button type="button" data-index="1" aria-label="Linha 1, coluna 2" disabled></button>
+        <button type="button" data-index="2" aria-label="Linha 1, coluna 3" disabled></button>
+        <button type="button" data-index="3" aria-label="Linha 2, coluna 1" disabled></button>
+        <button type="button" data-index="4" aria-label="Linha 2, coluna 2" disabled></button>
+        <button type="button" data-index="5" aria-label="Linha 2, coluna 3" disabled></button>
+        <button type="button" data-index="6" aria-label="Linha 3, coluna 1" disabled></button>
+        <button type="button" data-index="7" aria-label="Linha 3, coluna 2" disabled></button>
+        <button type="button" data-index="8" aria-label="Linha 3, coluna 3" disabled></button>
+      </div>
+
+      <div class="game-actions">
+        <button id="restartGame" class="button button--secondary" type="button" disabled>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5" />
+            <path d="M4 4v4.5h4.5" />
+          </svg>
+          Reiniciar partida
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer page-width">
+    <p>Jogo da Velha <span aria-hidden="true">/</span> Projeto do <a href="https://www.theodinproject.com/lessons/node-path-javascript-tic-tac-toe">The Odin Project</a></p>
+    <span>Três em linha e a rodada é sua.</span>
+  </footer>
+
+  <!-- data-result="X", "O" ou "tie" escolhe o símbolo exibido no topo do resultado. -->
+  <dialog id="resultDialog" class="result-dialog" aria-labelledby="resultTitle" aria-describedby="resultMessage">
+    <div class="result-mark" aria-hidden="true">
+      <span class="mark-text mark-text--x">X</span>
+      <span class="mark-text mark-text--o">O</span>
+    </div>
+    <p class="eyebrow">FIM DA RODADA</p>
+    <h2 id="resultTitle">Resultado da partida</h2>
+    <p id="resultMessage">Quem venceu ou se deu velha aparece aqui.</p>
+
+    <div class="dialog-actions">
+      <form method="dialog">
+        <button class="button button--secondary" type="submit">Ver tabuleiro</button>
+      </form>
+      <button id="playAgain" class="button button--primary" type="button" autofocus>Jogar de novo</button>
+    </div>
+  </dialog>
+</body>
+
+</html>
