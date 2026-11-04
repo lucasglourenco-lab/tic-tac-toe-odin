@@ -39,7 +39,7 @@ Regras de ouro:
 **Objetivo:** pensar antes de digitar. O enunciado diz que "gastar um tempo planejando facilita muito o resto".
 
 - [x] Ler o enunciado em [project_tic_tac_toe.md](../../../../referencias/curriculo/javascript/organizing_your_javascript_code/project_tic_tac_toe.md) e reescrever, com suas palavras, em 3 frases, o que o jogo precisa fazer.
-- [ ] Ler a lição de factories e módulos em `odin-lessons/lessons/node-path-javascript-factory-functions-and-the-module-pattern`. Depois, responder sem olhar: _o que é uma closure? Como ela cria uma variável "privada"?_
+- [x] Ler a lição de factories e módulos em `odin-lessons/lessons/node-path-javascript-factory-functions-and-the-module-pattern`. Depois, responder sem olhar: _o que é uma closure? Como ela cria uma variável "privada"?_
 - [ ] Ler o artigo [Building a house from the inside out](https://www.ayweb.dev/blog/building-a-house-from-the-inside-out).
 - [x] Em papel ou comentário, listar **os 3 "objetos" do jogo** (tabuleiro, jogador, controle do jogo) e, para cada um, duas colunas: _o que ele sabe_ (dados) e _o que ele faz_ (operações).
 - [x] Decidir e anotar: como será representada uma **casa vazia**? Por que uma única representação em todo o código evita bugs?
@@ -59,7 +59,7 @@ Regras de ouro:
 **Pendências curtas (resolva antes ou junto da 1.1):**
 
 - [x] **Closure (linha 13).** Está mais próxima, mas ainda mistura duas ideias: _esconder_ (consequência do escopo) e _lembrar_ (o que a closure realmente é). Faça o experimento do contador (função externa que devolve uma função interna que soma 1) e reescreva respondendo: _o que a função interna continua lembrando depois que a externa terminou?_
-- [ ] **Consultar sem alterar.** _(A previsão "o tabuleiro não muda" estava incorreta: faça o experimento num arquivo de rascunho, fora do `script.js`.)_ Você escreveu "consegue consultar, mas não alterar". Se um método devolver o próprio array do tabuleiro, quem recebe consegue alterá-lo? Teste no console e guarde a resposta para a tarefa 1.2.
+- [x] **Consultar sem alterar.** _(A previsão "o tabuleiro não muda" estava incorreta: faça o experimento num arquivo de rascunho, fora do `script.js`.)_ Você escreveu "consegue consultar, mas não alterar". Se um método devolver o próprio array do tabuleiro, quem recebe consegue alterá-lo? Teste no console e guarde a resposta para a tarefa 1.2.
 - [x] **Linha 10.** Resolvido: "o jogador que primeiro completar (3 casas) com a mesma marca".
 - [x] **Dono da `jogar` e redação da linha 18.** Resolvido: a `jogar` pertence ao fluxo, e o bloqueio após vitória ou velha está claro.
 - [x] **Lição de closures.** Lida (confirmado por você).
@@ -67,7 +67,7 @@ Regras de ouro:
 - [x] **Fim da rodada.** Você bloqueia jogadas depois de uma vitória. E depois de uma velha? Escreva a regra para os dois casos.
 - [x] **Custos** _(em andamento: você citou vantagens do array simples; faltam os custos de cada opção e um exemplo concreto de bug com dois valores de "vazio")_: cite um custo de usar array simples e um de usar 9 objetos. E por que uma única representação de "vazio" evita bugs?
 - [x] Lição de factories e módulos lida (confirmado por você).
-- [ ] Atualizar o `script.js`: linha 3 (IIFE para tabuleiro e fluxo, factory para jogadores) e linha 13 (a chamada da função externa devolve um objeto, guardado numa variável).
+- [x] Atualizar o `script.js`: linha 3 (IIFE para tabuleiro e fluxo, factory para jogadores) e linha 13 (a chamada da função externa devolve um objeto, guardado numa variável).
 - [ ] Artigo "Building a house from the inside out" (recomendado, ~10 min; não bloqueia a 1.1).
 - [x] **Decisão para a Fase 1:** _(IIFE para tabuleiro e fluxo, factory para jogadores. Falta ajustar a linha 3 do `script.js`.)_ o tabuleiro e o fluxo são únicos no jogo, os jogadores são dois. Quais viram IIFE e qual vira factory? Por quê? Sua linha 3 ainda diz "sempre dentro de factories": ela vale para os três?
 - [x] **Duas operações, dois donos.** _(Em andamento: falta dizer o que a `jogar` faz **depois** de chamar o tabuleiro, e se o tabuleiro devolve o objeto inteiro ou avisa se aceitou ou recusou.)_ Você disse que a `jogar` é do fluxo e que o tabuleiro "recebe a mudança". Então o tabuleiro tem uma operação própria de marcar (tarefa 1.3). Em uma frase cada: o que a operação do tabuleiro faz sozinha, e o que a `jogar` do fluxo faz antes e depois de chamá-la?
@@ -79,7 +79,7 @@ Regras de ouro:
 
 Conceito de apoio: closures e módulo (IIFE). A pergunta guia é: _quem pode mudar o array?_
 
-- [ ] **1.1 Criar o tabuleiro.** Prever: "se eu imprimir o tabuleiro agora, vejo \_\_\_". Conferir no console.
+- [x] **1.1 Criar o tabuleiro.** Prever: "se eu imprimir o tabuleiro agora, vejo \_\_\_". Conferir no console.
 - [ ] **1.2 Ler o estado.** Criar uma operação que permita consultar o tabuleiro **sem** dar acesso para alterar o array original. Experimento: tente alterar o array a partir de fora. Funcionou? Deveria?
 - [ ] **1.3 Marcar uma casa.** Operação que recebe posição e marca. Prever o resultado de marcar a casa 4 duas vezes seguidas.
 - [ ] **1.4 Recusar jogadas inválidas.** Casa ocupada, índice `-1`, `9`, `"abc"`, `1.5`. Para cada um, prever o que acontece **antes** de proteger, depois proteja.

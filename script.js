@@ -54,12 +54,10 @@ const gameTable = (() => {
     arr.push(item);
   }
   function print() {
-    console.log(arr);
+    return [...arr];
   }
   return { print };
 })();
-
-gameTable.print();
 
 // CONFERIR: Apareceu a array impressa pelo método.
 // Bateu com a previsão? Sim.
@@ -69,5 +67,40 @@ gameTable.print();
 
 // COMMIT: "cria tabuleiro com nove casas vazias"
 
-// ---------- 1.2 em diante ----------
-// Antes da 1.2: faça o experimento do array devolvido num arquivo de rascunho.
+// ---------- 1.2 Ler o estado do tabuleiro ----------
+// Objetivo: uma operação de leitura que mostra as casas,
+// mas NÃO permite alterar o tabuleiro de fora.
+
+// Experimento (num arquivo de rascunho, fora do script.js)
+// A) Função com um array privado e um método que devolve o PRÓPRIO array.
+//    Altere uma posição do resultado, fora da função, e leia de novo.
+
+// B) Repita devolvendo uma CÓPIA do array.
+// Antes de rodar, escreva: no A eu espero a array modificada ; no B eu espero a cópia da array original como na maneira que foi inicialmente criada .
+// Depois de rodar: aconteceu o que esperava.
+
+// Perguntas (responda antes de digitar)
+// 1. Por que, no A, o tabuleiro muda mesmo com o array "escondido"?
+//    R: Porque a variável recebe a array original. Mudá-la por fora, muda ela por dentro
+// 2. O que é uma cópia do array e como ela difere de outra variável apontando para o mesmo array?
+//    R: É uma outra array que tem como referência a array original, mas alterá-la não muda a array original
+// 3. Por que uma cópia rasa basta aqui? (o que o array guarda: textos, null ou objetos?)
+//    R: Basta pois não há objetos, somente uma propriedade primitiva. Se fosse objeto, ambas arrays apontariam para a mesma referência e alterar uma também alteraria outra.
+// 4. O print da 1.1 continua necessário depois da leitura? Mantenho, troco ou removo?
+//    R: Desnecessário, já que foi visto que o retorno é do que se queria.
+
+// PREVER: se eu ler o tabuleiro, mudar a posição 4 da cópia e ler de novo,
+// a casa 4 do tabuleiro vai estar 'X' (previsão).
+
+// FAZER ↓
+gameTable.print();
+gameTable[4] = "X";
+gameTable.print();
+
+// CONFERIR: apareceu ___ . Bateu com a previsão? ___
+
+// EXPLICAR (uma frase): por que a leitura devolve uma cópia? ___
+
+// COMMIT: "adiciona leitura do tabuleiro sem expor o array"
+
+// ---------- 1.3 em diante ----------
