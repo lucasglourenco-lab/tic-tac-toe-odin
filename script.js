@@ -1,18 +1,73 @@
-// Organizar objetos: um objeto para o tabuleiro, um para os jogadores e um objeto para controlar o fluxo do jogo.
+// ============================================================
+// PLANO
+// ============================================================
+// Regras: pouco código global. Tabuleiro e fluxo são IIFE (existem uma vez);
+// jogadores são criados por factory (são dois). Primeiro tudo no console, sem DOM.
 
-//Utilizar o mínimo de código global possível, sempre dentro de factories.
+// O jogo
+// - 2 jogadores e um tabuleiro de 9 casas, todas 'null' no início.
+// - Cada jogador, na sua vez, marca uma casa vazia com a sua marca.
+// - Vence quem primeiro preencher 3 casas com a mesma marca (linha, coluna ou diagonal).
+// - Tabuleiro cheio sem vencedor: velha.
 
-//Inicialmente o jogo deve funcionar no console.
+// Closure
+// Função interna que continua lembrando as variáveis da função externa,
+// mesmo depois de a externa terminar. A variável fica escondida de fora e só
+// as funções internas devolvidas (os métodos) conseguem usá-la.
 
-// O que o jogo faz?
-// 1. Possui dois jogadores e um tabuleiro com 09 posições, todas zeradas.
-// 2. Cada jogador, alternadamente, escolhe uma posição que recebe a sua marca (seu símbolo).
-// 3. Aquele que inicialmente completar uma coluna ou linha, inclusive diagonalmente, ganha o jogo.
+// Os 3 objetos
+// Jogador (factory):   sabe nome e marca ('X' ou 'O').
+// Tabuleiro (IIFE):    sabe as 9 casas (array, índice = posição, valor = marca ou null).
+//                      Marca uma casa vazia e responde true (aceitou) ou false (recusou).
+// Fluxo do jogo (IIFE): sabe de quem é a vez (X começa), o placar e se a rodada acabou.
+//                      Na jogada: chama o tabuleiro; se aceitou, confere vitória e velha;
+//                      se a rodada continua, passa a vez. Depois do fim, bloqueia jogadas.
 
-// O que é uma closure? Como ela cria uma variável privada?
-// Closure é o que existe dentro de um função que está disponível somente dentro daquela função, é privado para fora, mas que ao executar essa função, acaba sendo guardada na memória para que possa ser retornada quando necessário.
+// ============================================================
+// FASE 1 — TABULEIRO (só console, sem DOM)
+// ============================================================
 
-//Os objetos
-//1. Jogadores: Possui dois jogadores: 'X' e 'O', cada um com sua marca.
-//2. Tabuleiro: Possui 9 posições, todas inicialmente com os valores zerados, marcarei como 'null'. Ao passo que cada jogador escolhe uma posição, essa posição é remarcada para a marca(symbol) do jogador que escolheu, desde que ela já não tenha sido escolhida.
-//3. Fluxo do jogo: Sempre que uma jogada é aceita, a vez de jogar passa ao outro jogador. Ao final de cada jogada eu confiro se algum dos jogadores completou uma linha, coluna ou diagonal, o primeiro a completar vence. Caso nenhum consiga completar, o jogo deu 'velha' e necessita dessa forma ser reiniciado. Um contador acumula as vitórias de cada jogador.
+// ---------- 1.1 Criar o tabuleiro ----------
+// Objetivo: tabuleiro com 9 casas 'null', dentro de uma IIFE.
+
+// Perguntas (responda antes de digitar)
+// 1. O que é uma IIFE e o que ela devolve?
+//    R: Função executada na hora em que é criada, no formato (() => { ... })().
+//       Devolve: o return dentro de {}.
+// 2. Onde fica o array das casas e quem o enxerga?
+//    R: Em uma variável dentro da IIFE. Só as funções internas a enxergam.
+// 3. Se o array é privado, como conferir o tabuleiro na 1.1, antes da leitura (1.2)?
+//    R: Guardar a IIFE em uma variável retornando um objeto para essa variável com um método de leitura (console.log) do que foi desenvolvido ali.
+
+// PREVER: se eu olhar o tabuleiro agora, vejo undefined, pois está oculta -
+// mas se retorno o que foi desenvolvido dentro da arrow function dentro da IIFE,
+// consigo ler o tabuleiro, que deve ser devolvido como um array de 9 elementos 'null' - index de 0 a 8.
+
+// ==================================================================================
+// FAZER ↓
+// ===================================================================================
+// Uma variável para guardar o resultado da IIFE.
+const gameTable = (() => {
+  let arr = [];
+  for (let i = 0; i < 9; i++) {
+    let item = null;
+    arr.push(item);
+  }
+  function print() {
+    console.log(arr);
+  }
+  return { print };
+})();
+
+gameTable.print();
+
+// CONFERIR: Apareceu a array impressa pelo método.
+// Bateu com a previsão? Sim.
+
+// EXPLICAR (uma frase): por que o tabuleiro é IIFE e não factory?
+// Pois será uma função executada somente uma vez e não precisará ser reutilizada para criar novas funções como uma factory é.
+
+// COMMIT: "cria tabuleiro com nove casas vazias"
+
+// ---------- 1.2 em diante ----------
+// Antes da 1.2: faça o experimento do array devolvido num arquivo de rascunho.
