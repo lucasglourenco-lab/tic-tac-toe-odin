@@ -47,17 +47,17 @@
 // FAZER ↓
 // ===================================================================================
 // Uma variável para guardar o resultado da IIFE.
-const gameTable = (() => {
-  let arr = [];
-  for (let i = 0; i < 9; i++) {
-    let item = null;
-    arr.push(item);
-  }
-  function print() {
-    return [...arr];
-  }
-  return { print };
-})();
+// const gameTable = (() => {
+//   let arr = [];
+//   for (let i = 0; i < 9; i++) {
+//     let item = null;
+//     arr.push(item);
+//   }
+//   function table() {
+//     return [...arr];
+//   }
+//   return { table };
+// })();
 
 // CONFERIR: Apareceu a array impressa pelo método.
 // Bateu com a previsão? Sim.
@@ -81,26 +81,78 @@ const gameTable = (() => {
 
 // Perguntas (responda antes de digitar)
 // 1. Por que, no A, o tabuleiro muda mesmo com o array "escondido"?
-//    R: Porque a variável recebe a array original. Mudá-la por fora, muda ela por dentro
+//    R: Porque a variável recebe a array original como referência. Mudá-la por fora, muda ela por dentro
 // 2. O que é uma cópia do array e como ela difere de outra variável apontando para o mesmo array?
-//    R: É uma outra array que tem como referência a array original, mas alterá-la não muda a array original
+//    R: Com 'b = a', a e b são dois nomes para o MESMO array: mudar um muda o outro.
+//       Com '[...a]', nasce um array NOVO com os mesmos valores: mudar a cópia não afeta o original.
 // 3. Por que uma cópia rasa basta aqui? (o que o array guarda: textos, null ou objetos?)
 //    R: Basta pois não há objetos, somente uma propriedade primitiva. Se fosse objeto, ambas arrays apontariam para a mesma referência e alterar uma também alteraria outra.
 // 4. O print da 1.1 continua necessário depois da leitura? Mantenho, troco ou removo?
 //    R: Desnecessário, já que foi visto que o retorno é do que se queria.
 
 // PREVER: se eu ler o tabuleiro, mudar a posição 4 da cópia e ler de novo,
-// a casa 4 do tabuleiro vai estar 'X' (previsão).
+// a casa 4 do tabuleiro vai estar 'null' (previsão).
 
 // FAZER ↓
-gameTable.print();
-gameTable[4] = "X";
-gameTable.print();
+// const tabuleiro = gameTable.table();
+// tabuleiro[4] = "X";
+// const tabuleiroB = gameTable.table();
 
-// CONFERIR: apareceu ___ . Bateu com a previsão? ___
+// console.log(tabuleiro);
+// console.log(tabuleiroB);
 
-// EXPLICAR (uma frase): por que a leitura devolve uma cópia? ___
+// CONFERIR: apareceu 'X' na primeira e null na segunda chamada. Bateu com a previsão? Sim
+
+// EXPLICAR (uma frase): por que a leitura devolve uma cópia? Pois caso devolvesse a array original, essa array poderia ser modificada por fora da função, o que não é desejável.
 
 // COMMIT: "adiciona leitura do tabuleiro sem expor o array"
 
-// ---------- 1.3 em diante ----------
+// ---------- 1.3 Marcar uma casa ----------
+// Objetivo: uma operação do tabuleiro que recebe a posição e a marca e
+// coloca a marca nessa posição do array.
+// Ainda SEM validação (vem na 1.4) e SEM responder true/false (vem na 1.5).
+// Dica: comente os testes da 1.2 (linhas acima) para não misturar as saídas.
+
+// Perguntas (responda antes de digitar)
+// 1. Onde essa operação deve ficar: dentro da IIFE ou fora? Por quê?
+//    R: Dentro da IIFE. Será executada uma vez na criação e posteriormente será acessada.
+// 2. Quais dois dados ela precisa receber?
+//    R: Recebe como parâmetros a posição e a marca do player que irá inserir naquela posição
+// 3. Ela altera o 'arr' original ou uma cópia? Lembre da 1.2.
+//    R: O original, posteriormente uma cópia é servida.
+// 4. O que muda no 'return { table }' para a operação poder ser chamada de fora?
+//    R: acrescenta-se uma vírgula e retorna-se uma função (método)
+// 5. Nome da operação (mantenha o mesmo idioma de gameTable e table):
+//    R: Darei o nome de play
+
+// PREVER:
+// - Marco a posição 4 com 'X' e leio o tabuleiro: a posição 4 mostra 'X'
+// - Marco a posição 4 de novo com 'O' (ainda sem validação): a posição 4 fica 'O'
+
+// FAZER ↓
+
+const gameTable = (() => {
+  let arr = [];
+  for (let i = 0; i < 9; i++) {
+    let item = null;
+    arr.push(item);
+  }
+
+  function table() {
+    return [...arr];
+  }
+  function mark(position, mark) {
+    arr[position] = mark;
+  }
+
+  return { table, mark };
+})();
+
+// CONFERIR: apareceu 'X' e depois 'O'. Bateu com a previsão? Sim, nos dois casos.
+
+// EXPLICAR (uma frase): por que a marcação acontece dentro do tabuleiro e não fora?
+// A marcação ocorre dentro de gameTable (tabuleiro) pois é lá que vive a array original que será modificada.
+
+// COMMIT: "adiciona operação de marcar casa no tabuleiro"
+
+// ---------- 1.4 em diante ----------
