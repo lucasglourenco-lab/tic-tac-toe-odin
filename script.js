@@ -159,11 +159,11 @@
 // Objetivo: a operação de marcar NÃO altera o tabuleiro quando a posição é
 // inválida ou a casa já está ocupada. Ainda sem responder true/false (vem na 1.5).
 
-// Passo 1: PREVER antes de proteger. Preencha a coluna do meio ANTES de rodar.
+// Passo 1: PREVER ANTES de proteger. Preencha a coluna do meio ANTES de rodar.
 // Caso               | o que eu espero que a marcação faça hoje | o que aconteceu
 // casa já ocupada    | Remarca a casa                           | Remarcou a casa.
-// posição -1         | Cria uma propriedade                     | Não marcou.
-// posição 9          | Aumenta o tamanho da array               | Não marcou.
+// posição -1         | Cria uma propriedade                     | Criou a propriedade.
+// posição 9          | Aumenta o tamanho da array               | Aumentou o tamanho da array.
 // posição "abc"      | Não marque                               | Não marcou.
 // posição 1.5        | Não marque                               | Não marcou.
 // Atenção: nem todo efeito aparece na leitura (que devolve uma cópia).
@@ -172,7 +172,7 @@
 
 // Perguntas (responda antes de digitar)
 // 1. Que condições uma posição precisa cumprir para ser válida? Liste todas.
-//    R: Number maior ou igual a zero e menor que length. Ser inteiro e ser igual a null.
+//    R: Number maior ou igual a zero e menor que length. Casa igual a null.
 // 2. Em que ordem verificar? Checar "casa vazia" antes da faixa muda o resultado? (o que arr[9] devolve?)
 //    R: Primeiro verifico se é um number e se está dentro do que espero (>=0 && < arr.length), depois se é integer, por fim se está vazio ou não. Creio que não mudaria o resultado, arr[9] retornaria undefined.
 // 3. Como interromper a função sem alterar nada quando a jogada é inválida?
@@ -214,8 +214,8 @@ const gameTable = (() => {
 // CONFERIR: apareceu da forma prevista . Bateu com a previsão? Sim
 
 // EXPLICAR (uma frase): por que o tabuleiro valida em vez de confiar em quem o chama?
-// Pois é ele que salvará a array com as posições corretas das jogadas, não podendo depender de quem o chama, já que
-// esse que o chama pode passar parâmetros inválidos.
+// Pois é ele que salvará a array com as posições corretas das jogadas, não podendo depender de
+//  quem o chama, já que esse que o chama pode passar parâmetros inválidos.
 
 // COMMIT: "recusa jogadas inválidas no tabuleiro"
 
