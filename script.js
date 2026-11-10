@@ -186,10 +186,75 @@
 
 // FAZER ↓
 
+// const gameTable = (() => {
+//   let arr = [];
+//   for (let i = 0; i < 9; i++) {
+//     let item = null;
+//     arr.push(item);
+//   }
+
+//   function table() {
+//     return [...arr];
+//   }
+
+//   function mark(position, playerSymbol) {
+//     if (
+//       Number.isInteger(position) &&
+//       position >= 0 &&
+//       position < arr.length &&
+//       arr[position] === null
+//     ) {
+//       arr[position] = playerSymbol;
+//     }
+//   }
+
+//   return { table, mark };
+// })();
+
+// CONFERIR: apareceu da forma prevista . Bateu com a previsão? Sim
+
+// EXPLICAR (uma frase): por que o tabuleiro valida em vez de confiar em quem o chama?
+// Pois é ele que salvará a array com as posições corretas das jogadas, não podendo depender de
+//  quem o chama, já que esse que o chama pode passar parâmetros inválidos.
+
+// COMMIT: "recusa jogadas inválidas no tabuleiro"
+
+// ---------- 1.5 Informar o resultado da jogada ----------
+// Objetivo: a marcação passa a responder true (marcou) ou false (recusou).
+// O tabuleiro só informa; quem o chama decide o que fazer (ex.: passar a vez).
+
+// Perguntas (responda antes de digitar)
+// 1. O que o fluxo do jogo vai fazer com um true? E com um false?
+//    R: com um true ele confere se há uma vitória ou velha, se não houver, passa a vez.
+// 2. Por que é melhor o tabuleiro apenas informar do que decidir sozinho o que
+//    fazer depois (passar a vez, por exemplo)? Lembre quem faz o quê no plano dos 3 objetos.
+//    R: o tabuleiro só informa pois quem controla o fluxo é outra função, que chama o tabuleiro
+//    ao sinal de true.
+// 3. Hoje a mark não tem return com valor. O que ela devolve quando é chamada?
+//    Teste: guarde o retorno numa variável e imprima.
+//    R: retorna 'undefined'
+// 4. Se ela devolvesse undefined na jogada recusada, seria o mesmo que false?
+//    Teste no console: undefined === false e if (undefined) { ... }.
+//    R: Não, apesar de if (undefined) ser false, undefined não é igual a false.
+// 5. Quais são os dois caminhos dentro da função (marcou / recusou)?
+//    Quantos return você precisa e onde ficam?
+//    R: São dois caminhos, um quando há o true no if com um return no fim, outro caso esse if não seja executado.
+
+// PREVER: preencha ANTES de rodar.
+// Caso                          | retorno esperado | a casa mudou?
+// marcar 4 com 'X' (vazia)      | undefined        | Sim
+// marcar 4 de novo com 'O'      | undefined        | Não
+// posição -1                    | undefined        | Não
+// posição 9                     | undefined        | Não
+// posição "abc"                 | undefined        | Não
+// posição 1.5                   | undefined        | Não
+
+// FAZER ↓
+
 const gameTable = (() => {
   let arr = [];
   for (let i = 0; i < 9; i++) {
-    let item = null;
+    item = null;
     arr.push(item);
   }
 
@@ -205,18 +270,22 @@ const gameTable = (() => {
       arr[position] === null
     ) {
       arr[position] = playerSymbol;
+      return true;
+    } else {
+      return false;
     }
   }
 
-  return { table, mark };
+  return { mark, table };
 })();
 
-// CONFERIR: apareceu da forma prevista . Bateu com a previsão? Sim
+console.log(gameTable.arr);
 
-// EXPLICAR (uma frase): por que o tabuleiro valida em vez de confiar em quem o chama?
-// Pois é ele que salvará a array com as posições corretas das jogadas, não podendo depender de
-//  quem o chama, já que esse que o chama pode passar parâmetros inválidos.
+// CONFERIR: os retornos foram true e false . Bateu com a previsão? Sim
 
-// COMMIT: "recusa jogadas inválidas no tabuleiro"
+// EXPLICAR (uma frase): por que a marcação devolve true/false em vez de passar a vez sozinha? Pois passar a vez
+// não é dever do tabuleiro, mas sim de outra função que controla o jogo
 
-// ---------- 1.5 em diante ----------
+// COMMIT: "tabuleiro informa se a jogada foi aceita"
+
+// ---------- 1.6 em diante ----------

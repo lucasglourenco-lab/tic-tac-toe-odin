@@ -1,18 +1,24 @@
-const funcA = (() => {
+const gameTable = (() => {
   let arr = [];
   for (let i = 0; i < 9; i++) {
     let item = null;
     arr.push(item);
   }
 
-  function read() {
+  function table() {
     return [...arr];
   }
-  return { read };
+
+  function mark(position, playerSymbol) {
+    if (
+      Number.isInteger(position) &&
+      position >= 0 &&
+      position < arr.length &&
+      arr[position] === null
+    ) {
+      arr[position] = playerSymbol;
+    }
+  }
+
+  return { table, mark };
 })();
-
-const gameTabuleiro = funcA.read();
-gameTabuleiro[3] = "x";
-
-console.log(gameTabuleiro);
-console.log(funcA.read());
