@@ -83,8 +83,8 @@ Conceito de apoio: closures e módulo (IIFE). A pergunta guia é: _quem pode mud
 - [x] **1.2 Ler o estado.** Criar uma operação que permita consultar o tabuleiro **sem** dar acesso para alterar o array original. Experimento: tente alterar o array a partir de fora. Funcionou? Deveria?
 - [x] **1.3 Marcar uma casa.** Operação que recebe posição e marca. Prever o resultado de marcar a casa 4 duas vezes seguidas.
 - [x] **1.4 Recusar jogadas inválidas.** Casa ocupada, índice `-1`, `9`, `"abc"`, `1.5`. Para cada um, prever o que acontece **antes** de proteger, depois proteja.
-- [ ] **1.5 Informar o resultado da jogada.** A operação deve avisar quem chamou se a jogada foi aceita ou recusada. Por que isso é melhor do que a função decidir sozinha o que fazer depois?
-- [ ] **1.6 Limpar o tabuleiro.** Prever: depois de limpar, o tabuleiro é idêntico ao inicial?
+- [x] **1.5 Informar o resultado da jogada.** A operação deve avisar quem chamou se a jogada foi aceita ou recusada. Por que isso é melhor do que a função decidir sozinha o que fazer depois?
+- [x] **1.6 Limpar o tabuleiro.** Prever: depois de limpar, o tabuleiro é idêntico ao inicial?
 
 **Conferência:** sequência de testes no console cobrindo tudo acima, tentativas inválidas deixam o tabuleiro intacto.
 

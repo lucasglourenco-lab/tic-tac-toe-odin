@@ -251,35 +251,33 @@
 
 // FAZER ↓
 
-const gameTable = (() => {
-  let arr = [];
-  for (let i = 0; i < 9; i++) {
-    item = null;
-    arr.push(item);
-  }
+// const gameTable = (() => {
+//   let arr = [];
+//   for (let i = 0; i < 9; i++) {
+//     let item = null;
+//     arr.push(item);
+//   }
 
-  function table() {
-    return [...arr];
-  }
+//   function table() {
+//     return [...arr];
+//   }
 
-  function mark(position, playerSymbol) {
-    if (
-      Number.isInteger(position) &&
-      position >= 0 &&
-      position < arr.length &&
-      arr[position] === null
-    ) {
-      arr[position] = playerSymbol;
-      return true;
-    } else {
-      return false;
-    }
-  }
+//   function mark(position, playerSymbol) {
+//     if (
+//       Number.isInteger(position) &&
+//       position >= 0 &&
+//       position < arr.length &&
+//       arr[position] === null
+//     ) {
+//       arr[position] = playerSymbol;
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   }
 
-  return { mark, table };
-})();
-
-console.log(gameTable.arr);
+//   return { mark, table };
+// })();
 
 // CONFERIR: os retornos foram true e false . Bateu com a previsão? Sim
 
@@ -288,4 +286,81 @@ console.log(gameTable.arr);
 
 // COMMIT: "tabuleiro informa se a jogada foi aceita"
 
-// ---------- 1.6 em diante ----------
+// ---------- 1.6 Limpar o tabuleiro ----------
+// Objetivo: uma operação do tabuleiro que devolve as 9 casas a 'null',
+// para começar uma nova rodada.
+
+// Perguntas (responda antes de digitar)
+// 1. Quem executa a limpeza: o tabuleiro ou quem o chama? Por quê?
+//    R: O tabuleiro executa com uma função que está dentro dele.
+//    Pois há uma closure que só o tabuleiro tem acesso.
+// 2. O laço que cria as 9 casas já existe na IIFE. Se eu copiar esse laço dentro da
+//    limpeza, o que acontece no dia em que o tabuleiro mudar de tamanho?
+//    Como evitar repetir o mesmo código em dois lugares?
+//    R: Se o tabuleiro mudar de tamanho a limpeza não alcança o novo tamanho.
+//    Não repito o mesmo código, mas passo um novo loop com forEach item do tabuleiro.
+// 3. Há duas formas de pensar: (a) trocar o array por um novo cheio de null;
+//    (b) mudar os valores dentro do mesmo array. Qual escolho e por quê?
+//    R: O segundo. Pois o array já está criado, basta passar uma função que modifica todos itens
+//    que já existem.
+// 4. A limpeza pode falhar? Ela precisa devolver true/false como a mark?
+//    R: Não. Ela não precisa devolver pois sempre executará o código de limpeza.
+// 5. Nome da operação (mesmo idioma de gameTable, table e mark):
+//    R: clear
+
+// PREVER:
+// - Marco as posições 0, 4 e 8, limpo e leio o tabuleiro: tudo marcará como null
+// - Depois de limpar, ele é idêntico ao inicial (9 casas, todas null)? Deve ser
+// - Depois de limpar, marcar a posição 4 de novo retorna: o que foi marcado
+// - Limpar um tabuleiro que já estava vazio resulta em: o mesmo tabuleiro todo null
+
+// FAZER ↓
+const gameTable = (() => {
+  let arr = [];
+  for (let i = 0; i < 9; i++) {
+    let item = null;
+    arr.push(item);
+  }
+
+  const table = function () {
+    return [...arr];
+  };
+
+  const mark = function (position, playerSymbol) {
+    if (
+      Number.isInteger(position) &&
+      position < arr.length &&
+      position >= 0 &&
+      arr[position] === null
+    ) {
+      arr[position] = playerSymbol;
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const clear = function () {
+    arr.forEach((item, index) => (arr[index] = null));
+  };
+
+  return { table, mark, clear };
+})();
+
+// CONFERIR: apareceu o item marcado . Bateu com a previsão? Não
+
+// EXPLICAR (uma frase): por que a limpeza fica dentro do tabuleiro e não fora?
+// Pois ela precisa ter acesso às variáveis do ambiente que quem está de fora não possui.
+// É uma 'closure'.
+
+// COMMIT: "adiciona limpeza do tabuleiro"
+
+// ---------- Fechamento da Fase 1 ----------
+// Antes de passar para os jogadores, confira em sequência, só pelo console:
+// - tabuleiro novo tem 9 casas null;
+// - mark aceita jogada válida (true) e recusa inválida e ocupada (false), sem alterar nada;
+// - table devolve cópia (alterar a cópia não muda o tabuleiro);
+// - limpar volta ao estado inicial e o tabuleiro continua jogável.
+// Se tudo passar, marque a Fase 1 como concluída no TODO e faça o commit.
+
+// ---------- Fase 2 em diante ----------
