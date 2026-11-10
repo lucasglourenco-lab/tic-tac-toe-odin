@@ -363,4 +363,57 @@ const gameTable = (() => {
 // - limpar volta ao estado inicial e o tabuleiro continua jogável.
 // Se tudo passar, marque a Fase 1 como concluída no TODO e faça o commit.
 
-// ---------- Fase 2 em diante ----------
+// ============================================================
+// FASE 2 — JOGADORES E TURNOS (só console, sem DOM)
+// ============================================================
+// Pergunta guia: por que o jogador é uma factory e o tabuleiro é uma IIFE?
+// Etapas: 2.1 factory de jogador | 2.2 jogador atual | 2.3 passar a vez
+//         2.4 estado da rodada   | 2.5 controlador do jogo
+
+// ---------- 2.1 Factory de jogador ----------
+// Objetivo: uma função que cria jogadores (nome e marca) e devolve um objeto
+// novo a cada chamada. Criar os dois: um com 'X' e outro com 'O'.
+
+// Perguntas (responda antes de digitar)
+// 1. Qual a diferença entre a IIFE do tabuleiro e uma factory? Quando cada uma roda e quantas vezes?
+//    R: A IIFE é executada imediatamente e uma vez somente.
+//    A factory é uma função que fabrica objetos. Ela irá ser executada duas vezes, uma para cada jogador.
+// 2. O que a factory recebe e o que ela devolve?
+//    R: Recebe o nome e a marca do jogador e devolve um objeto com os dois valores.
+// 3. A marca de um jogador não pode mudar depois de criado. Como o objeto devolvido
+//    pode mostrar nome e marca sem permitir trocar a marca de fora? Lembre da 1.2.
+//    R: Pode retornar uma cópia e não o objeto original.
+// 4. E se o nome vier vazio ou só com espaços? Decida quem aplica a regra
+//    ("Jogador X" / "Jogador O"): a factory ou a interface? Por quê?
+//    R: Se vier vazio, a factory retorna false e dá um aviso à interface para que ela corrija e reexecute.
+//    Faço assim para que a verificação fique com a própria função.
+// 5. Nome da factory (convenção, mesmo idioma do restante do código):
+//    R: createPlayer
+
+// PREVER:
+// - Crio dois jogadores e os imprimo: playerX = {name: 'Lucas', mark: 'X'}; playerO = {name: 'Ana', mark: 'O'}
+// - Tento trocar a marca de um deles por fora e leio de novo: Sem proteção, irá alterar
+// - Crio um terceiro jogador: o que impede de ele ter a mesma marca de outro?
+//   Nada. Enquanto não houver algo que cheque e valide, será possível criar infinitas funções com a marca
+//   que for desejada.
+
+// FAZER ↓
+
+const createPlayer = function (name, mark) {
+  return { name, mark };
+};
+
+let playerX = createPlayer("Lucas", "X");
+let playerO = createPlayer("Ana", "O");
+
+console.log(playerX, playerO);
+
+// CONFERIR: apareceu 2 objects, com as marcações que previ . Bateu com a previsão? Sim
+
+// EXPLICAR (uma frase): por que jogador é factory e tabuleiro é IIFE? Jogador será criado mais de uma vez, tabuleiro somente uma.
+
+// COMMIT: "cria factory de jogadores"
+
+// ---------- 2.2 a 2.5 (roteiros quando chegar a hora) ----------
+// 2.2 Guardar o jogador atual | 2.3 Passar a vez
+// 2.4 Estado da rodada        | 2.5 Controlador do jogo
