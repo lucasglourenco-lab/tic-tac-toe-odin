@@ -398,20 +398,6 @@ const gameTable = (() => {
 
 // FAZER ↓
 
-const createPlayer = function (_name, _mark) {
-  let name = _name;
-  let mark = _mark;
-  const player = function () {
-    return { name, mark };
-  };
-  return { player };
-};
-
-let playerX = createPlayer("Lucas", "X");
-let playerO = createPlayer("Ana", "O");
-
-console.log(playerX.player(), playerO.player());
-
 // CONFERIR: apareceu 2 objects, com as marcações que previ . Bateu com a previsão? Sim
 
 // EXPLICAR (uma frase): por que jogador é factory e tabuleiro é IIFE? Jogador será criado mais de uma vez, tabuleiro somente uma.
@@ -434,20 +420,57 @@ console.log(playerX.player(), playerO.player());
 //    O que ganho recebendo de fora?
 //    R: Ele os recebe de fora após eles serem criados pela interação com o formulário.
 //    Ao receber de fora, o fluxo só chama os jogadores, eu divido as responsabilidades.
+//    Dentro de fluxo deve haver uma função que recebe os parâmetros (markPlayer) do formulário após
+//    interação com a interface e atualiza duas variáveis
+//    dentro de gameFlow - playerX e playerO que existem como null. Depois marca currentPlayer como playerX.
 // 4. Quem é o jogador da vez no início? Como garantir isso também quando a rodada for reiniciada?
 //    R: Inicia-se com o jogador X. Caso a jogada seja aceita e passa para o outro jogador. Se não for aceita, permanece o mesmo jogador.
-//    Se X e aceita >> O. Se XX e recusada >> X. Se O e aceita >> X, Se O e recusada >> O. Sempre ao fim do jogo, reinicia-se o jogador inicial.
+//    Se X e aceita >> O. Se X e recusada >> X. Se O e aceita >> X, Se O e recusada >> O. Sempre ao fim do jogo, reinicia-se o jogador inicial.
 // 5. Esse objeto é uma IIFE ou uma factory? Por quê?
 //    R: É uma IIFE, que é executada imediatamente e uma vez somente.
 // 6. Nome da operação de leitura e nome do objeto (mesmo idioma do restante):
-//    R: objeto = gameFlux; currentPlayer = jogador da vez; getPlayer = jogador da vez.
+//    R: objeto = gameFlow; getPlayer = expõe o jogador da vez.
 
 // PREVER:
 // - Logo que o fluxo é criado, o jogador da vez é: X
 // - Tento trocar o jogador da vez por fora e leio de novo: Não é possível trocar
 // - Leio duas vezes seguidas sem fazer nenhuma jogada: Permanece o jogador.
+// - Leio o jogador da vez antes de os jogadores serem registrados: A leitura devolve undefined.
 
 // FAZER ↓
+
+const createPlayer = function (_name, _mark) {
+  let name = _name;
+  let mark = _mark;
+  const player = function () {
+    return { name, mark };
+  };
+  return { player };
+};
+
+let playerX = createPlayer("Lucas", "X");
+let playerO = createPlayer("Ana", "O");
+
+const gameFlow = (() => {
+  let firstPlayer = null;
+  let secondPlayer = null;
+  let currentPlayer = null;
+
+  function markPlayer(_playerX, _playerO) {
+    firstPlayer = _playerX.player();
+    secondPlayer = _playerO.player();
+    currentPlayer = firstPlayer;
+    return true;
+  }
+
+  function getPlayer() {
+    return { ...currentPlayer };
+  }
+
+  return { getPlayer, markPlayer };
+})();
+
+console.log(gameFlow.getPlayer());
 
 // CONFERIR: apareceu ___ . Bateu com a previsão? ___
 
