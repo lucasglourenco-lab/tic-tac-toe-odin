@@ -65,13 +65,46 @@ const gameFlow = (() => {
     }
   }
 
-  return { getPlayer, markPlayer };
+  function nextPlayer() {
+    if (currentPlayer === null) {
+      return false;
+    } else if (getPlayer().mark === "X") {
+      currentPlayer = secondPlayer;
+      return true;
+    } else if (getPlayer().mark === "O") {
+      currentPlayer = firstPlayer;
+      return true;
+    }
+    return false;
+  }
+
+  return { getPlayer, markPlayer, nextPlayer };
 })();
 
-// ---------- Testes provisórios (2.2) ----------
+// ---------- Testes provisórios (2.3) ----------
 let playerX = createPlayer("Lucas", "X");
 let playerO = createPlayer("Ana", "O");
 
-gameFlow.markPlayer(playerX, playerO);
+// Teste 6 - Antes do registro (de marcar o jogador)
+console.log("Teste 6: " + gameFlow.nextPlayer());
 
-console.log(gameFlow.getPlayer());
+gameFlow.markPlayer(playerX, playerO);
+// Teste 1
+console.log("Teste 1: ", gameFlow.getPlayer());
+// Teste 2
+gameFlow.nextPlayer();
+console.log("Teste 2: ", gameFlow.getPlayer());
+
+// Teste 3
+gameFlow.nextPlayer();
+console.log("Teste 3: ", gameFlow.getPlayer());
+// Teste 4
+const nextValidation = gameFlow.nextPlayer();
+console.log("Teste 4: ", gameFlow.getPlayer(), nextValidation);
+
+// Teste 5 - não chama nextPlayer();
+console.log("Teste 5: ", gameFlow.getPlayer());
+
+// Teste 7
+gameFlow.currentPlayer = null;
+console.log("Teste 7: ", gameFlow.getPlayer());

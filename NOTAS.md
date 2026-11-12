@@ -289,7 +289,7 @@ Conferido em sequência, só pelo console:
 
 **Conferir:**
 
-1. Logo que o fluxo é criado, o jogador é null, pois fluxo é uma IIFE e os jogadores ainda não foram criados.
+1. Logo que o fluxo é criado, jogadores são null, pois markPlayer ainda não foi chamado.
 2. Certo, não é possível trocar pois os valores estão protegidos.
 3. Certo.
 4. Devolve null por um if else construído com esse objetivo, caso contrário retornaria um objeto vazio, já que o que retorna é uma cópia do objeto original (para fins de proteção)
@@ -306,33 +306,41 @@ Pois é o fluxo que recebe os jogadores e retém as informações, tabuleiro som
 **Perguntas** (responda antes de digitar)
 
 1. Como o fluxo descobre quem é o "outro" jogador a partir do atual? Compare duas formas: pelo nome ou pela marca. Qual é mais segura? (Pense: e se os dois jogadores tiverem o mesmo nome?)
-   - R: ___
+   - R: Comparar pela 'marca', que sempre será X ou O.
 2. O fluxo precisa guardar também o "próximo jogador", ou dá para saber a partir do atual e dos dois jogadores que ele já tem?
-   - R: ___
+   - R: Não precisa guardar o próximo jogador, visto que são apenas dois jogadores e que ao aceitar a jogada o próximo jogador será necessariamente o outro.
 3. O que a operação deve fazer se for chamada antes de os jogadores serem registrados (`currentPlayer` é `null`)? Lembre da validação da 1.4.
-   - R: ___
+   - R: não deverá ser executada - `return false`.
 4. Essa operação pode falhar? Se sim, ela devolve `true`/`false` como a `mark`, ou nada como a `clear`? Por quê?
-   - R: ___
+   - R: Sim e deve devolver algo para avisar a quem o chama.
 5. Quando ela deve ser chamada na jogada real: após jogada aceita, recusada, ou sempre? (Ligação com o tabuleiro: 2.5.) Na 2.3 o que simula uma jogada recusada?
-   - R: ___
+   - R: Após a jogada aceita. A operação retorna `false`.
 6. Nome da operação (mesmo idioma do restante):
-   - R: ___
+   - R: nextPlayer.
 
 **Prever** (preencha ANTES de rodar; jogadores já registrados, X começa)
 
-| Situação | Jogador da vez |
-| --- | --- |
-| Logo depois de registrar | ___ |
-| Depois de passar a vez 1 vez | ___ |
-| Depois de passar a vez 2 vezes | ___ |
-| Depois de passar a vez 3 vezes | ___ |
-| Jogada recusada (não chamo a operação) | ___ |
-| Operação chamada antes do registro | ___ |
-| Alterar por fora o objeto lido e ler de novo | ___ |
+--| Situação -----------------------------------------| Jogador da vez |
+1.| Logo depois de registrar ------------------------ | X |
+2.| Depois de passar a vez 1 vez -------------------- | O |
+3.| Depois de passar a vez 2 vezes ------------------ | X |
+4.| Depois de passar a vez 3 vezes ------------------ | O |
+5.| Jogada recusada (não chamo a operação) ---------- | Repete |
+6.| Operação chamada antes do registro -------------- | Não executa, retorna false |
+7.| Alterar por fora o objeto lido e ler de novo ---- | não altera o jogador |
 
-**Conferir:** ___
+**Conferir:**
 
-**Explicar** (uma frase): por que quem troca a vez é o fluxo e não o jogador? ___
+1. Sim
+2. Sim
+3. Sim
+4. Sim
+5. Errado, pois ao mostrar o console.log do nextPlayer, ele executa retorna o true que eu esperava mas ao mesmo tempo muda o mark que deveria repetir. Depois de separar a chamada do console.log, bateu.
+6. Agora correto, precisei realizar o teste antes de executar o markPlayer, pois após a execução os players recebem valores assim como currentPlayer, o que faz com que a função retorne true.
+7. Não altera pois por mais que crie-se a propriedade currentPlayer em gameFlow, a closure não é alterada pois só existe dentro da função e não é retornada no final.
+
+**Explicar** (uma frase): por que quem troca a vez é o fluxo e não o jogador?
+Pois é o fluxo que controla todo o jogo. Ele que verifica se a jogada foi aceita ou não para poder trocar a vez do jogador.
 
 **Commit sugerido:** `adiciona troca de jogador da vez ao fluxo`
 
