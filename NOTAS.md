@@ -8,7 +8,7 @@ Aqui ficam as perguntas, previsões, conferências e explicações de cada taref
 
 - [Plano](#plano)
 - [Fase 1 — Tabuleiro](#fase-1--tabuleiro): 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, fechamento
-- [Fase 2 — Jogadores e turnos](#fase-2--jogadores-e-turnos): 2.1, 2.2 (em andamento)
+- [Fase 2 — Jogadores e turnos](#fase-2--jogadores-e-turnos): 2.1, 2.2, 2.3 (roteiro pronto)
 
 ---
 
@@ -120,13 +120,13 @@ Aqui ficam as perguntas, previsões, conferências e explicações de cada taref
 
 **Passo 1 — Prever antes de proteger (versão sem validação)**
 
-| Caso | O que eu espero que a marcação faça hoje | O que aconteceu |
-| --- | --- | --- |
-| casa já ocupada | Remarca a casa | Remarcou a casa. |
-| posição -1 | Cria uma propriedade | Criou a propriedade. |
-| posição 9 | Aumenta o tamanho da array | Aumentou o tamanho da array. |
-| posição "abc" | Não marque | Não marcou. |
-| posição 1.5 | Não marque | Não marcou. |
+| Caso            | O que eu espero que a marcação faça hoje | O que aconteceu              |
+| --------------- | ---------------------------------------- | ---------------------------- |
+| casa já ocupada | Remarca a casa                           | Remarcou a casa.             |
+| posição -1      | Cria uma propriedade                     | Criou a propriedade.         |
+| posição 9       | Aumenta o tamanho da array               | Aumentou o tamanho da array. |
+| posição "abc"   | Não marque                               | Não marcou.                  |
+| posição 1.5     | Não marque                               | Não marcou.                  |
 
 Atenção: nem todo efeito aparece na leitura (que devolve uma cópia). Como enxergar também o que ficou "estranho" dentro do array? — _Não entendi._ (Explicado depois: um array é um objeto; `arr[-1] = 'X'` cria uma propriedade, que a cópia com spread não mostra.)
 
@@ -170,14 +170,14 @@ Atenção: nem todo efeito aparece na leitura (que devolve uma cópia). Como enx
 
 **Prever** (estado antes de implementar)
 
-| Caso | Retorno esperado | A casa mudou? |
-| --- | --- | --- |
-| marcar 4 com 'X' (vazia) | undefined | Sim |
-| marcar 4 de novo com 'O' | undefined | Não |
-| posição -1 | undefined | Não |
-| posição 9 | undefined | Não |
-| posição "abc" | undefined | Não |
-| posição 1.5 | undefined | Não |
+| Caso                     | Retorno esperado | A casa mudou? |
+| ------------------------ | ---------------- | ------------- |
+| marcar 4 com 'X' (vazia) | undefined        | Sim           |
+| marcar 4 de novo com 'O' | undefined        | Não           |
+| posição -1               | undefined        | Não           |
+| posição 9                | undefined        | Não           |
+| posição "abc"            | undefined        | Não           |
+| posição 1.5              | undefined        | Não           |
 
 **Conferir:** os retornos foram `true` e `false`. Bateu com a previsão? _(Anotado "Sim", mas a previsão era `undefined`: o resultado mudou porque o código mudou.)_
 
@@ -261,7 +261,7 @@ Conferido em sequência, só pelo console:
 
 **Commits:** `cria factory de jogadores`, `finaliza parte 2.1`, `torna a marca do jogador fixa com closure`
 
-### 2.2 Guardar o jogador atual _(em andamento)_
+### 2.2 Guardar o jogador atual
 
 **Objetivo:** o jogo sabe quem é o jogador da vez (X começa) e só o dono dessa informação pode mudá-la. Ainda SEM passar a vez (2.3).
 
@@ -285,20 +285,57 @@ Conferido em sequência, só pelo console:
 - Logo que o fluxo é criado, o jogador da vez é: X.
 - Tento trocar o jogador da vez por fora e leio de novo: não é possível trocar.
 - Leio duas vezes seguidas sem fazer nenhuma jogada: permanece o jogador.
-- Leio o jogador da vez antes de os jogadores serem registrados: a leitura devolve `undefined`.
+- Leio o jogador da vez antes de os jogadores serem registrados: a leitura devolve `null`.
 
-**Verificado em conversa (para ajustar)**
+**Conferir:**
 
-- Antes de registrar, `getPlayer()` devolve `{}` (spread de `undefined`), e não `undefined`. Decidir o que devolver (`null`?) e ajustar código e previsão.
-- `currentPlayer` está sem valor inicial; as outras variáveis começam `null`. Deixar coerente.
-- A variável `teste` do `script.js` não é usada: remover.
+1. Logo que o fluxo é criado, o jogador é null, pois fluxo é uma IIFE e os jogadores ainda não foram criados.
+2. Certo, não é possível trocar pois os valores estão protegidos.
+3. Certo.
+4. Devolve null por um if else construído com esse objetivo, caso contrário retornaria um objeto vazio, já que o que retorna é uma cópia do objeto original (para fins de proteção)
 
-**Conferir:** ___
-
-**Explicar:** por que essa informação fica no fluxo e não no tabuleiro? ___
+**Explicar:** por que essa informação fica no fluxo e não no tabuleiro?
+Pois é o fluxo que recebe os jogadores e retém as informações, tabuleiro somente recebe as jogadas e altera as marcações.
 
 **Commit sugerido:** `guarda o jogador atual no fluxo do jogo`
 
-### 2.3 a 2.5 _(roteiros quando chegar a hora)_
+### 2.3 Passar a vez
 
-2.3 Passar a vez | 2.4 Estado da rodada | 2.5 Controlador do jogo
+**Objetivo:** uma operação do fluxo que troca o jogador da vez pelo outro. Nesta tarefa ela é chamada "à mão", nos testes; ligá-la ao tabuleiro (passar a vez só quando a jogada for aceita) é a 2.5.
+
+**Perguntas** (responda antes de digitar)
+
+1. Como o fluxo descobre quem é o "outro" jogador a partir do atual? Compare duas formas: pelo nome ou pela marca. Qual é mais segura? (Pense: e se os dois jogadores tiverem o mesmo nome?)
+   - R: ___
+2. O fluxo precisa guardar também o "próximo jogador", ou dá para saber a partir do atual e dos dois jogadores que ele já tem?
+   - R: ___
+3. O que a operação deve fazer se for chamada antes de os jogadores serem registrados (`currentPlayer` é `null`)? Lembre da validação da 1.4.
+   - R: ___
+4. Essa operação pode falhar? Se sim, ela devolve `true`/`false` como a `mark`, ou nada como a `clear`? Por quê?
+   - R: ___
+5. Quando ela deve ser chamada na jogada real: após jogada aceita, recusada, ou sempre? (Ligação com o tabuleiro: 2.5.) Na 2.3 o que simula uma jogada recusada?
+   - R: ___
+6. Nome da operação (mesmo idioma do restante):
+   - R: ___
+
+**Prever** (preencha ANTES de rodar; jogadores já registrados, X começa)
+
+| Situação | Jogador da vez |
+| --- | --- |
+| Logo depois de registrar | ___ |
+| Depois de passar a vez 1 vez | ___ |
+| Depois de passar a vez 2 vezes | ___ |
+| Depois de passar a vez 3 vezes | ___ |
+| Jogada recusada (não chamo a operação) | ___ |
+| Operação chamada antes do registro | ___ |
+| Alterar por fora o objeto lido e ler de novo | ___ |
+
+**Conferir:** ___
+
+**Explicar** (uma frase): por que quem troca a vez é o fluxo e não o jogador? ___
+
+**Commit sugerido:** `adiciona troca de jogador da vez ao fluxo`
+
+### 2.4 e 2.5 _(roteiros quando chegar a hora)_
+
+2.4 Estado da rodada | 2.5 Controlador do jogo

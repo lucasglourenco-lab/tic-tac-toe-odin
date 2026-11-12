@@ -44,11 +44,11 @@ const createPlayer = function (_name, _mark) {
   return { player };
 };
 
-// ---------- Fluxo do jogo (2.2, em andamento) ----------
+// ---------- Fluxo do jogo (2.2) ----------
 const gameFlow = (() => {
   let firstPlayer = null;
   let secondPlayer = null;
-  let currentPlayer;
+  let currentPlayer = null;
 
   function markPlayer(_playerX, _playerO) {
     firstPlayer = _playerX.player();
@@ -58,7 +58,11 @@ const gameFlow = (() => {
   }
 
   function getPlayer() {
-    return { ...currentPlayer };
+    if (currentPlayer === null) {
+      return null;
+    } else {
+      return { ...currentPlayer };
+    }
   }
 
   return { getPlayer, markPlayer };
