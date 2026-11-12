@@ -96,7 +96,7 @@ Conceito de apoio: closures e módulo (IIFE). A pergunta guia é: _quem pode mud
 
 Conceito de apoio: factory functions. Pergunta guia: _por que um jogador é criado por uma factory e o tabuleiro por uma IIFE?_
 
-- [ ] **2.1 Factory de jogador.** Cada jogador tem nome e marca. Criar os dois e imprimir.
+- [x] **2.1 Factory de jogador.** Cada jogador tem nome e marca. Criar os dois e imprimir.
 - [ ] **2.2 Guardar o jogador atual.** Definir onde fica essa informação e quem tem permissão para mudá-la.
 - [ ] **2.3 Passar a vez.** Prever: após 3 jogadas válidas, de quem é a vez? E após uma jogada **recusada**?
 - [ ] **2.4 Estado da rodada.** Pensar em três estados (não iniciada, em andamento, encerrada). Qual operação cada estado deve bloquear?

@@ -382,31 +382,35 @@ const gameTable = (() => {
 //    R: Recebe o nome e a marca do jogador e devolve um objeto com os dois valores.
 // 3. A marca de um jogador não pode mudar depois de criado. Como o objeto devolvido
 //    pode mostrar nome e marca sem permitir trocar a marca de fora? Lembre da 1.2.
-//    R: Pode retornar uma cópia e não o objeto original.
+//    R: Retorna uma função que lê uma constante que está numa closure (executada na criação e não mais alterada por fora).
 // 4. E se o nome vier vazio ou só com espaços? Decida quem aplica a regra
 //    ("Jogador X" / "Jogador O"): a factory ou a interface? Por quê?
-//    R: Se vier vazio, a factory retorna false e dá um aviso à interface para que ela corrija e reexecute.
-//    Faço assim para que a verificação fique com a própria função.
+//    R: Se vier vazio, a interface valida se aceita ou não o conteúdo como parâmetro, para que a factory só execute.
 // 5. Nome da factory (convenção, mesmo idioma do restante do código):
 //    R: createPlayer
 
 // PREVER:
 // - Crio dois jogadores e os imprimo: playerX = {name: 'Lucas', mark: 'X'}; playerO = {name: 'Ana', mark: 'O'}
-// - Tento trocar a marca de um deles por fora e leio de novo: Sem proteção, irá alterar
+// - Tento trocar a marca de um deles por fora e leio de novo: Não altera pois há proteção.
 // - Crio um terceiro jogador: o que impede de ele ter a mesma marca de outro?
 //   Nada. Enquanto não houver algo que cheque e valide, será possível criar infinitas funções com a marca
 //   que for desejada.
 
 // FAZER ↓
 
-const createPlayer = function (name, mark) {
-  return { name, mark };
+const createPlayer = function (_name, _mark) {
+  let name = _name;
+  let mark = _mark;
+  const player = function () {
+    return { name, mark };
+  };
+  return { player };
 };
 
 let playerX = createPlayer("Lucas", "X");
 let playerO = createPlayer("Ana", "O");
 
-console.log(playerX, playerO);
+console.log(playerX.player(), playerO.player());
 
 // CONFERIR: apareceu 2 objects, com as marcações que previ . Bateu com a previsão? Sim
 
@@ -414,6 +418,39 @@ console.log(playerX, playerO);
 
 // COMMIT: "cria factory de jogadores"
 
-// ---------- 2.2 a 2.5 (roteiros quando chegar a hora) ----------
-// 2.2 Guardar o jogador atual | 2.3 Passar a vez
-// 2.4 Estado da rodada        | 2.5 Controlador do jogo
+// ---------- 2.2 Guardar o jogador atual ----------
+// Objetivo: o jogo sabe quem é o jogador da vez (X começa) e só o dono dessa
+// informação pode mudá-la. Ainda SEM passar a vez (isso é a 2.3).
+
+// Perguntas (responda antes de digitar)
+// 1. Onde fica a informação "jogador da vez": no tabuleiro, no jogador ou no fluxo do jogo? Por quê?
+//    (Lembre do plano dos 3 objetos no começo do arquivo.)
+//    R: ___
+// 2. Quem pode apenas LER essa informação? Quem pode MUDAR? Como o objeto do fluxo
+//    mostra a leitura sem permitir a escrita de fora? (mesma ideia da 1.2)
+//    R: ___
+// 3. O fluxo precisa conhecer os dois jogadores. Ele os cria lá dentro ou os recebe de fora?
+//    O que ganho recebendo de fora?
+//    R: ___
+// 4. Quem é o jogador da vez no início? Como garantir isso também quando a rodada for reiniciada?
+//    R: ___
+// 5. Esse objeto é uma IIFE ou uma factory? Por quê?
+//    R: ___
+// 6. Nome da operação de leitura e nome do objeto (mesmo idioma do restante):
+//    R: ___
+
+// PREVER:
+// - Logo que o fluxo é criado, o jogador da vez é: ___
+// - Tento trocar o jogador da vez por fora e leio de novo: ___
+// - Leio duas vezes seguidas sem fazer nenhuma jogada: ___
+
+// FAZER ↓
+
+// CONFERIR: apareceu ___ . Bateu com a previsão? ___
+
+// EXPLICAR (uma frase): por que essa informação fica no fluxo e não no tabuleiro? ___
+
+// COMMIT: "guarda o jogador atual no fluxo do jogo"
+
+// ---------- 2.3 a 2.5 (roteiros quando chegar a hora) ----------
+// 2.3 Passar a vez | 2.4 Estado da rodada | 2.5 Controlador do jogo
