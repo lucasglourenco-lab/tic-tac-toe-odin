@@ -425,24 +425,27 @@ console.log(playerX.player(), playerO.player());
 // Perguntas (responda antes de digitar)
 // 1. Onde fica a informação "jogador da vez": no tabuleiro, no jogador ou no fluxo do jogo? Por quê?
 //    (Lembre do plano dos 3 objetos no começo do arquivo.)
-//    R: ___
+//    R: No fluxo do jogo, pois ele que controla quem joga e só ele deve ser capaz de alterar.
 // 2. Quem pode apenas LER essa informação? Quem pode MUDAR? Como o objeto do fluxo
 //    mostra a leitura sem permitir a escrita de fora? (mesma ideia da 1.2)
-//    R: ___
+//    R: O fluxo lê a informação de quem é a vez. Quem muda é somente o fluxo.
+//    O objeto permitirá a leitura e não a escrita por fora a partir de closures.
 // 3. O fluxo precisa conhecer os dois jogadores. Ele os cria lá dentro ou os recebe de fora?
 //    O que ganho recebendo de fora?
-//    R: ___
+//    R: Ele os recebe de fora após eles serem criados pela interação com o formulário.
+//    Ao receber de fora, o fluxo só chama os jogadores, eu divido as responsabilidades.
 // 4. Quem é o jogador da vez no início? Como garantir isso também quando a rodada for reiniciada?
-//    R: ___
+//    R: Inicia-se com o jogador X. Caso a jogada seja aceita e passa para o outro jogador. Se não for aceita, permanece o mesmo jogador.
+//    Se X e aceita >> O. Se XX e recusada >> X. Se O e aceita >> X, Se O e recusada >> O. Sempre ao fim do jogo, reinicia-se o jogador inicial.
 // 5. Esse objeto é uma IIFE ou uma factory? Por quê?
-//    R: ___
+//    R: É uma IIFE, que é executada imediatamente e uma vez somente.
 // 6. Nome da operação de leitura e nome do objeto (mesmo idioma do restante):
-//    R: ___
+//    R: objeto = gameFlux; currentPlayer = jogador da vez; getPlayer = jogador da vez.
 
 // PREVER:
-// - Logo que o fluxo é criado, o jogador da vez é: ___
-// - Tento trocar o jogador da vez por fora e leio de novo: ___
-// - Leio duas vezes seguidas sem fazer nenhuma jogada: ___
+// - Logo que o fluxo é criado, o jogador da vez é: X
+// - Tento trocar o jogador da vez por fora e leio de novo: Não é possível trocar
+// - Leio duas vezes seguidas sem fazer nenhuma jogada: Permanece o jogador.
 
 // FAZER ↓
 
