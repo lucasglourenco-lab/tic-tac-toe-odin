@@ -8,7 +8,7 @@ Aqui ficam as perguntas, previsões, conferências e explicações de cada taref
 
 - [Plano](#plano)
 - [Fase 1 — Tabuleiro](#fase-1--tabuleiro): 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, fechamento
-- [Fase 2 — Jogadores e turnos](#fase-2--jogadores-e-turnos): 2.1, 2.2, 2.3 (roteiro pronto)
+- [Fase 2 — Jogadores e turnos](#fase-2--jogadores-e-turnos): 2.1, 2.2, 2.3, 2.4 (código funcionando; faltam testes e CONFERIR), 2.5 (roteiro pronto)
 
 ---
 
@@ -344,6 +344,119 @@ Pois é o fluxo que controla todo o jogo. Ele que verifica se a jogada foi aceit
 
 **Commit sugerido:** `adiciona troca de jogador da vez ao fluxo`
 
-### 2.4 e 2.5 _(roteiros quando chegar a hora)_
+### 2.4 Estado da rodada
 
-2.4 Estado da rodada | 2.5 Controlador do jogo
+**Objetivo:** o fluxo passa a saber em que fase a rodada está (não iniciada, em andamento, encerrada) e a dizer quais operações valem em cada fase. Nesta tarefa o estado é mudado "à mão", nos testes; quem muda o estado na jogada real é o controlador (2.5) e a vitória/empate (Fase 3).
+
+**Perguntas** (responda antes de digitar)
+
+1. Como representar os três estados? Compare duas formas: textos (`"waiting"`, `"playing"`, `"over"`) ou números (`0`, `1`, `2`). Qual é mais fácil de ler e de errar menos? (Pense: o que acontece se você digitar `"plaing"`?)
+   - R: É mais fácil de errar utilizando números. Iremos utilizar estados com strings.
+2. Em que estado o fluxo começa? E em que momento ele passa para "em andamento"? (Lembre: `markPlayer` registra os jogadores.)
+   - R: Começa em waiting, a partir do momento que markPlayer é chamado e gera os jogadores, passa para `playing`.
+3. Para cada estado, quais operações devem ser **bloqueadas**? Complete a tabela abaixo antes de escrever qualquer código.
+   - R: (tabela do PREVER)
+4. Quem pode **ler** o estado e quem pode **mudá-lo**? Lembre da 2.2: como o objeto do fluxo permite a leitura sem permitir a escrita de fora?
+   - R: O próprio fluxo lê o estado e chama a operação correta a partir do que lê. Só o fluxo altera o estado da jogada.
+5. Quando uma operação é bloqueada, o que ela devolve? Siga o padrão que você já usa (`true`/`false`) ou outro? Por quê?
+   - R: Será `false`, para seguir o padrão do que já está sendo construído.
+6. O que acontece com o estado quando a rodada é reiniciada (`clear` do tabuleiro)? Quem avisa o fluxo? (Só pense; a ligação é a 2.5.)
+   - R: Volta a ser `waiting` .
+7. Nomes: da variável do estado, da operação que **lê** o estado e da que **muda** o estado (mesmo idioma do restante):
+   - R: roundStatus, getRoundStatus e roundChange.
+
+**Prever** (preencha ANTES de rodar)
+
+Complete a coluna do meio com "pode" ou "bloqueia" e escreva, na última, o que a operação devolve.
+
+| Operação ------------------ | Não iniciada | Em andamento | Encerrada |
+| `getPlayer` (ler a vez) --- | bloqueia | pode | pode |
+| `nextPlayer` (passar a vez) | bloqueia | pode | bloqueia |
+| jogar numa casa ----------- | não bloqueia | pode | não bloqueia |
+| `markPlayer` (registrar) -- | pode | bloqueia | bloqueia |
+
+Mais previsões:
+
+- Logo que o fluxo é criado, o estado é: (waiting)
+- Logo depois de `markPlayer`, o estado é: (playing)
+- Mudo o estado para "encerrada" e chamo `nextPlayer`: devolve false
+- Tento mudar o estado por fora (`gameFlow.estado = ...`) e leio de novo: o status que já possuía
+- Peço um estado que não existe (texto errado) à operação que muda: retorna false
+
+**Fazer** (no `script.js`, dentro do `gameFlow`)
+
+- [x] Guardar o estado numa variável privada do closure.
+- [x] Criar a operação que **lê** o estado.
+- [x] Criar a operação que **muda** o estado (valida o valor recebido: só aceita os três estados).
+- [x] Fazer `nextPlayer` respeitar o estado (bloqueia quando a rodada está encerrada, no mínimo).
+- [x] Testes provisórios da 2.4 com rótulos nos `console.log` e o retorno guardado em variável (lembre do bug do Teste 4 da 2.3).
+
+**Conferir:**
+R: as conferências bateram. Antes de iniciar chamar markPlayer e iniciar com currentPlayer, getPlayer e nextPlayer são bloqueados. mark de gameTable não é, pois gameTable não tem acesso ao status da jogada que está em gameFlow. markPlayer não é bloqueado pois é justamente o que altera o status para "playing". Após o início da jogada, tudo é autorizado a rodar, exceto markPlayer, pois os jogadores já foram criados. Após o término para 'over', nextPlayer e markPlayer são bloqueados para rodar.
+
+**Explicar** (uma frase): por que o estado da rodada fica no fluxo e não no tabuleiro?
+R: Pois é o estado que serve de parâmetro para trocar ou não o jogador e ele precisa estar visível para quem irá chamar a jogada que é o fluxo.
+
+**Commit sugerido:** `adiciona estado da rodada ao fluxo`
+
+### 2.5 Controlador do jogo
+
+**Objetivo:** juntar as peças que você já tem. Uma operação recebe uma posição, pede ao tabuleiro para marcar com a marca do jogador da vez e **só passa a vez se o tabuleiro aceitou**. Vitória e empate NÃO entram aqui (Fase 3).
+
+**Você já tem tudo que precisa:** `gameTable.mark(posição, marca)` devolve `true`/`false`; `gameFlow.getPlayer()` diz quem joga; `gameFlow.nextPlayer()` passa a vez; `gameFlow.getRoundStatus()` diz se a rodada está em andamento. Esta tarefa é só **ligar** isso, sem inventar nada novo. Faça em 3 passos pequenos (cada um cabe em uma sessão curta).
+
+**Perguntas** (responda antes de digitar)
+
+1. Onde mora a nova operação: dentro do `gameFlow` (que já tem jogadores, vez e estado) ou em um objeto novo? Pense: o que cada opção obriga você a escrever a mais? (Pelo Plano no começo deste arquivo, quem coordena a jogada é o fluxo.)
+   - R: \_\_\_
+2. O que a operação recebe? Que informação ela precisa pedir ao fluxo e ao tabuleiro para marcar a casa? De onde vem a marca ("X" ou "O")?
+   - R: \_\_\_
+3. Ordem dos passos: (a) marcar no tabuleiro, (b) passar a vez, (c) conferir o estado da rodada. Em que ordem devem acontecer e por quê? O que dá errado se (b) vier antes de (a)?
+   - R: \_\_\_
+4. A rodada não está em andamento (`"waiting"` ou `"over"`). A operação chega a chamar o tabuleiro? O que devolve? Por quê?
+   - R: \_\_\_
+5. O tabuleiro recusa a jogada (casa ocupada ou posição inválida). A vez passa? O que a operação devolve? (Lembre da tabela X/O + aceita/recusada da 2.2.)
+   - R: \_\_\_
+6. O que a operação devolve quando tudo dá certo? Siga o padrão que você já usa.
+   - R: \_\_\_
+7. Nome da operação (mesmo idioma do restante):
+   - R: \_\_\_
+
+**Prever** (preencha ANTES de rodar; jogadores Lucas = X e Ana = O já registrados, rodada em andamento)
+
+Este é o teste "4 jogadas, uma inválida" da conferência da Fase 2.
+
+| Passo -------------------------- | Devolve | Vez de quem depois | Casa fica |
+| 1. X joga na casa 0 ------------ | \_\_\_ | \_\_\_ | \_\_\_ |
+| 2. O joga na casa 0 (ocupada) -- | \_\_\_ | \_\_\_ | \_\_\_ |
+| 3. O joga na casa 4 ------------ | \_\_\_ | \_\_\_ | \_\_\_ |
+| 4. X joga na posição 9 (fora) -- | \_\_\_ | \_\_\_ | \_\_\_ |
+| 5. X joga na casa 8 ------------ | \_\_\_ | \_\_\_ | \_\_\_ |
+
+Mais previsões:
+
+- Chamo a operação antes de registrar os jogadores: \_\_\_
+- Mudo o estado para `"over"` e chamo a operação: devolve \_\_\_ e o tabuleiro \_\_\_
+- Chamo duas vezes seguidas na mesma casa: o que a 2ª devolve e de quem é a vez? \_\_\_
+
+**Fazer** (um passo por vez; rode e compare com o PREVER antes de seguir)
+
+- [ ] **2.5a** Jogada feliz: marca a casa e passa a vez (só o caminho em que tudo dá certo).
+- [ ] **2.5b** Recusas: rodada fora de andamento e casa recusada (a vez não muda).
+- [ ] **2.5c** Testes da tabela acima, com rótulos e retornos guardados em variável.
+
+**Conferir:** \_\_\_
+
+**Explicar** (uma frase): por que a vez só passa depois de o tabuleiro aceitar a jogada? \_\_\_
+
+**Commit sugerido:** `liga tabuleiro e fluxo na operação de jogar`
+
+**Fica para depois (não faça agora):** reiniciar a rodada e as validações abaixo. Só entram se sobrar fôlego; a Fase 3 não depende delas.
+
+**Pendências de validação trazidas das tarefas anteriores** (resolver aqui ou antes):
+
+- **`markPlayer` não valida o que recebe.** Se um dos argumentos for `null` (ou não tiver `.player()`), a linha `_playerX.player()` quebra com `TypeError: Cannot read properties of null`. Achado no Teste 6 da 2.3, quando `markPlayer(null, null)` derrubou o script. Pergunta: o que `markPlayer` deveria fazer com argumentos inválidos? Devolver `false` como a `mark`?
+- **Marcas duplicadas.** Nada impede registrar dois jogadores com a mesma marca (dois "X"). Aí `nextPlayer` não alterna direito. Pergunta: quem deve recusar isso, a factory, o `markPlayer` ou a interface?
+- **Marca que não é X nem O.** `nextPlayer` já devolve `false` nesse caso, mas o `markPlayer` aceita. Vale recusar na entrada.
+- **Nomes vazios.** Delegados à interface (Fase 5), mas conferir que o fluxo se comporta bem com `""`.
+- **Reiniciar a rodada.** Definir a operação que devolve a vez ao X e volta o estado para "não iniciada" ou "em andamento", e quem a chama junto com o `clear` do tabuleiro.

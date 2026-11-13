@@ -44,16 +44,33 @@ const createPlayer = function (_name, _mark) {
   return { player };
 };
 
-// ---------- Fluxo do jogo (2.2) ----------
+// ---------- Fluxo do jogo (2.2, 2.3 e 2.4) ----------
 const gameFlow = (() => {
   let firstPlayer = null;
   let secondPlayer = null;
   let currentPlayer = null;
+  let roundStatus = "waiting";
+
+  function getRoundStatus() {
+    return roundStatus;
+  }
+
+  function roundChange(status) {
+    if (status !== "waiting" && status !== "playing" && status !== "over") {
+      return false;
+    }
+    roundStatus = status;
+    return true;
+  }
 
   function markPlayer(_playerX, _playerO) {
+    if (roundStatus === "playing" || roundStatus === "over") {
+      return false;
+    }
     firstPlayer = _playerX.player();
     secondPlayer = _playerO.player();
     currentPlayer = firstPlayer;
+    roundChange("playing");
     return true;
   }
 
@@ -66,7 +83,7 @@ const gameFlow = (() => {
   }
 
   function nextPlayer() {
-    if (currentPlayer === null) {
+    if (currentPlayer === null || roundStatus === "over") {
       return false;
     } else if (getPlayer().mark === "X") {
       currentPlayer = secondPlayer;
@@ -78,33 +95,7 @@ const gameFlow = (() => {
     return false;
   }
 
-  return { getPlayer, markPlayer, nextPlayer };
+  return { getPlayer, markPlayer, nextPlayer, getRoundStatus, roundChange };
 })();
 
-// ---------- Testes provisórios (2.3) ----------
-let playerX = createPlayer("Lucas", "X");
-let playerO = createPlayer("Ana", "O");
-
-// Teste 6 - Antes do registro (de marcar o jogador)
-console.log("Teste 6: " + gameFlow.nextPlayer());
-
-gameFlow.markPlayer(playerX, playerO);
-// Teste 1
-console.log("Teste 1: ", gameFlow.getPlayer());
-// Teste 2
-gameFlow.nextPlayer();
-console.log("Teste 2: ", gameFlow.getPlayer());
-
-// Teste 3
-gameFlow.nextPlayer();
-console.log("Teste 3: ", gameFlow.getPlayer());
-// Teste 4
-const nextValidation = gameFlow.nextPlayer();
-console.log("Teste 4: ", gameFlow.getPlayer(), nextValidation);
-
-// Teste 5 - não chama nextPlayer();
-console.log("Teste 5: ", gameFlow.getPlayer());
-
-// Teste 7
-gameFlow.currentPlayer = null;
-console.log("Teste 7: ", gameFlow.getPlayer());
+// ---------- Fluxo do jogo (2.5) ----------
