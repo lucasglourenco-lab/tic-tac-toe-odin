@@ -95,7 +95,68 @@ const gameFlow = (() => {
     return false;
   }
 
-  return { getPlayer, markPlayer, nextPlayer, getRoundStatus, roundChange };
+  function playGame(position) {
+    if (
+      getRoundStatus() === "playing" &&
+      gameTable.mark(position, getPlayer().mark)
+    ) {
+      nextPlayer();
+      return true;
+    }
+    return false;
+  }
+
+  return {
+    getPlayer,
+    markPlayer,
+    nextPlayer,
+    getRoundStatus,
+    roundChange,
+    playGame,
+  };
 })();
 
 // ---------- Fluxo do jogo (2.5) ----------
+
+// 2.5a
+
+let playerX = createPlayer("Lucas", "X");
+let playerO = createPlayer("Ana", "O");
+
+console.log(
+  "Chamo a operação antes de registrar os jogadores, retorna: ",
+  gameFlow.playGame(0),
+);
+
+gameFlow.markPlayer(playerX, playerO);
+
+console.log("Após a jogada na casa 0, devolve: " + gameFlow.playGame(0));
+console.log("Tabuleiro: " + gameTable.table());
+console.log("É a vez de: " + gameFlow.getPlayer().name);
+
+// 2.5b
+
+console.log(
+  "Após repetir a jogada na casa 0, devolve: " + gameFlow.playGame(0),
+);
+console.log("Tabuleiro: " + gameTable.table());
+console.log("É a vez de: " + gameFlow.getPlayer().name);
+
+// 2.5c
+console.log("Após a jogada na casa 4, devolve: " + gameFlow.playGame(4));
+console.log("Tabuleiro: " + gameTable.table());
+console.log("É a vez de: " + gameFlow.getPlayer().name);
+
+console.log("Após a jogada na casa 9 'fora', devolve: " + gameFlow.playGame(9));
+console.log("Tabuleiro: " + gameTable.table());
+console.log("É a vez de: " + gameFlow.getPlayer().name);
+
+console.log("Após a jogada na casa 8, devolve: " + gameFlow.playGame(8));
+console.log("Tabuleiro: " + gameTable.table());
+console.log("É a vez de: " + gameFlow.getPlayer().name);
+
+gameFlow.roundChange("over");
+console.log(
+  "Mudo o estado para over e chamo uma operação nova, retorna: ",
+  gameFlow.playGame(3),
+);

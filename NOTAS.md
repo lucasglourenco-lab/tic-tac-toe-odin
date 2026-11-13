@@ -408,46 +408,46 @@ R: Pois é o estado que serve de parâmetro para trocar ou não o jogador e ele 
 **Perguntas** (responda antes de digitar)
 
 1. Onde mora a nova operação: dentro do `gameFlow` (que já tem jogadores, vez e estado) ou em um objeto novo? Pense: o que cada opção obriga você a escrever a mais? (Pelo Plano no começo deste arquivo, quem coordena a jogada é o fluxo.)
-   - R: \_\_\_
+   - R: Irá morar dentro do fluxo, pois será necessário somente chamar a operação de marcar o tabuleiro que está dentro de gameTable.
 2. O que a operação recebe? Que informação ela precisa pedir ao fluxo e ao tabuleiro para marcar a casa? De onde vem a marca ("X" ou "O")?
-   - R: \_\_\_
+   - R: A operação recebe a marca do jogador atual que vem de getPlayer.
 3. Ordem dos passos: (a) marcar no tabuleiro, (b) passar a vez, (c) conferir o estado da rodada. Em que ordem devem acontecer e por quê? O que dá errado se (b) vier antes de (a)?
-   - R: \_\_\_
+   - R: c -> a -> b. primeiro confere o estado da rodada, então marca no tabuleiro e por último passa a vez. Se passar a vez antes de marcar, pode marcar com a marca do jogador errado.
 4. A rodada não está em andamento (`"waiting"` ou `"over"`). A operação chega a chamar o tabuleiro? O que devolve? Por quê?
-   - R: \_\_\_
+   - R: Não marca, devolve false o estado 'playing' é necessário para rodar a operação.
 5. O tabuleiro recusa a jogada (casa ocupada ou posição inválida). A vez passa? O que a operação devolve? (Lembre da tabela X/O + aceita/recusada da 2.2.)
-   - R: \_\_\_
+   - R: Não deve passar. A operação devolve false e não troca o jogador.
 6. O que a operação devolve quando tudo dá certo? Siga o padrão que você já usa.
-   - R: \_\_\_
+   - R: Devolve true
 7. Nome da operação (mesmo idioma do restante):
-   - R: \_\_\_
+   - R: playGame
 
 **Prever** (preencha ANTES de rodar; jogadores Lucas = X e Ana = O já registrados, rodada em andamento)
 
 Este é o teste "4 jogadas, uma inválida" da conferência da Fase 2.
 
 | Passo -------------------------- | Devolve | Vez de quem depois | Casa fica |
-| 1. X joga na casa 0 ------------ | \_\_\_ | \_\_\_ | \_\_\_ |
-| 2. O joga na casa 0 (ocupada) -- | \_\_\_ | \_\_\_ | \_\_\_ |
-| 3. O joga na casa 4 ------------ | \_\_\_ | \_\_\_ | \_\_\_ |
-| 4. X joga na posição 9 (fora) -- | \_\_\_ | \_\_\_ | \_\_\_ |
-| 5. X joga na casa 8 ------------ | \_\_\_ | \_\_\_ | \_\_\_ |
+| 1. X joga na casa 0 ------------ | true | O | X |
+| 2. O joga na casa 0 (ocupada) -- | false | O | X |
+| 3. O joga na casa 4 ------------ | true | X | O |
+| 4. X joga na posição 9 (fora) -- | false | X | retorna false |
+| 5. X joga na casa 8 ------------ | true | O | X |
 
 Mais previsões:
 
-- Chamo a operação antes de registrar os jogadores: \_\_\_
-- Mudo o estado para `"over"` e chamo a operação: devolve \_\_\_ e o tabuleiro \_\_\_
-- Chamo duas vezes seguidas na mesma casa: o que a 2ª devolve e de quem é a vez? \_\_\_
+- Chamo a operação antes de registrar os jogadores: Retorna false.
+- Mudo o estado para `"over"` e chamo a operação: devolve false e o tabuleiro não marca
+- Chamo duas vezes seguidas na mesma casa: o que a 2ª devolve e de quem é a vez? a operação retorna false, não passa a vez e não marca o tabuleiro.
 
 **Fazer** (um passo por vez; rode e compare com o PREVER antes de seguir)
 
-- [ ] **2.5a** Jogada feliz: marca a casa e passa a vez (só o caminho em que tudo dá certo).
-- [ ] **2.5b** Recusas: rodada fora de andamento e casa recusada (a vez não muda).
-- [ ] **2.5c** Testes da tabela acima, com rótulos e retornos guardados em variável.
+- [x] **2.5a** Jogada feliz: marca a casa e passa a vez (só o caminho em que tudo dá certo).
+- [x] **2.5b** Recusas: rodada fora de andamento e casa recusada (a vez não muda).
+- [x] **2.5c** Testes da tabela acima, com rótulos e retornos guardados em variável.
 
-**Conferir:** \_\_\_
+**Conferir:** Todas as previsões batem depois de serem executadas. Foi necessário incluir a verificação de status para ser === playing e a partir do momento que as jogadas foram chamadas, tudo bateu conforme o previsto.
 
-**Explicar** (uma frase): por que a vez só passa depois de o tabuleiro aceitar a jogada? \_\_\_
+**Explicar** (uma frase): por que a vez só passa depois de o tabuleiro aceitar a jogada? Pois conforme a regra de negócio do jogo, só se passa a vez do jogador quando ele fez uma jogada válida, que retorna true.
 
 **Commit sugerido:** `liga tabuleiro e fluxo na operação de jogar`
 
