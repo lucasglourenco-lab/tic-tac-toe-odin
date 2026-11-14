@@ -137,4 +137,51 @@ const gameFlow = (() => {
 // players => createPlayer;
 // fluxo do jogo => gameFlow (getPlayer, markPlayer, nextPlayer, getRoundStatus, roundChange, playGame e getWinList)
 
-console.log(gameFlow.getWinList());
+const isWin = function (tabuleiro, winTest, playerMark) {
+  if (
+    tabuleiro[winTest[0]] === playerMark &&
+    tabuleiro[winTest[1]] === playerMark &&
+    tabuleiro[winTest[2]] === playerMark
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+let test1 = isWin(
+  ["X", "X", "X", null, null, null, null, null, null],
+  [0, 1, 2],
+  "X",
+);
+
+let arrayTest = ["X", "X", "X", null, null, null, null, null, null];
+
+let test2 = isWin(arrayTest, [0, 1, 2], "O");
+let test3 = isWin(
+  [null, null, null, null, null, null, null, null, null],
+  [0, 1, 2],
+  "X",
+);
+let test4 = isWin(
+  ["X", "X", "O", null, null, null, null, null, null],
+  [0, 1, 2],
+  "X",
+);
+let test5 = isWin(
+  ["X", "X", null, null, null, null, null, null, null],
+  [0, 1, 2],
+  "X",
+);
+let test6 = isWin(
+  [null, null, "X", null, "X", null, "X", null, null],
+  [2, 4, 6],
+  "X",
+);
+
+console.log("Teste 1: ", test1);
+console.log("Teste 2: ", test2);
+console.log("Teste 3: ", test3);
+console.log("Teste 4: ", test4);
+console.log("Teste 5: ", test5);
+console.log("Teste 6: ", test6);
+console.log(arrayTest);

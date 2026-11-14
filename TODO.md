@@ -110,7 +110,7 @@ Conceito de apoio: factory functions. Pergunta guia: _por que um jogador é cria
 
 **Objetivo:** o jogo completo no console.
 
-- [ ] **3.1 Listar as 8 combinações vencedoras** em uma estrutura de dados. Conferir: são 3 linhas, 3 colunas e 2 diagonais. Quais índices formam cada uma?
+- [x] **3.1 Listar as 8 combinações vencedoras** em uma estrutura de dados. Conferir: são 3 linhas, 3 colunas e 2 diagonais. Quais índices formam cada uma?
 - [ ] **3.2 Verificar se uma combinação está completa.** Prever: três casas vazias contam como vitória? Por quê?
 - [ ] **3.3 Testar cada marca.** Fazer a verificação funcionar tanto para X quanto para O.
 - [ ] **3.4 Detectar empate.** Quando exatamente o jogo empata?

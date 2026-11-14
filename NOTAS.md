@@ -540,37 +540,39 @@ Mais previsões:
 **Perguntas** (responda antes de digitar)
 
 1. O que a operação recebe e o que devolve? Liste os parâmetros e o tipo do retorno.
-   - R: \_\_\_
+   - R: recebe os parâmetros: lista que será verificada, marca do jogador da vez, e tabuleiro. Retorna true se houver vitória ou false se não houver.
 2. Pergunta do TODO: três casas **vazias** (`null`) contam como vitória? Por quê? Pense: o que acontece se você só comparar as três casas entre si e todas forem `null`? (`null === null` dá o quê?)
-   - R: \_\_\_
+   - R: Não, pois todas casas iniciam como null e se fosse assim logo de cara já marcaria uma vitória.
 3. Duas formas de checar: (a) comparar as 3 casas entre si; (b) comparar cada casa com a marca esperada. Qual das duas evita o problema do `null`? Por quê?
-   - R: \_\_\_
+   - R: irei utilizar a opção 'b', pois ao comparar com a marca esperada - que será X ou O, evito o problema do null
 4. De onde vem o tabuleiro? `gameTable.table()` devolve uma cópia. Uma cópia serve para só **olhar**? Por quê não precisa do original?
-   - R: \_\_\_
+   - R: Não precisa do original poisa operação requer somente a leitura.
 5. Esta operação precisa mudar alguma coisa (tabuleiro, vez, estado)? Ou só responde? O que isso diz sobre quem deve chamá-la?
-   - R: \_\_\_
+   - R: Não muda nada, só verifica se há a combinação verificada. Pode ser chamada pelo próprio fluxo do jogo.
 6. Nome da operação:
-   - R: \_\_\_
+   - R: isWin?
 
 **Prever** (preencha ANTES de rodar; monte os tabuleiros **à mão** em arrays, sem jogar. `N` = `null`)
 
 | Tabuleiro ------------------------ | Trinca | Marca | Devolve |
-| `[X,X,X,N,N,N,N,N,N]` ------------ | 0,1,2 | X | \_\_\_ |
-| `[X,X,X,N,N,N,N,N,N]` ------------ | 0,1,2 | O | \_\_\_ |
-| `[N,N,N,N,N,N,N,N,N]` ------------ | 0,1,2 | X | \_\_\_ |
-| `[X,X,O,N,N,N,N,N,N]` ------------ | 0,1,2 | X | \_\_\_ |
-| `[X,X,N,N,N,N,N,N,N]` ------------ | 0,1,2 | X | \_\_\_ |
-| `[N,N,X,N,X,N,X,N,N]` ------------ | 2,4,6 | X | \_\_\_ |
+| `[X,X,X,N,N,N,N,N,N]` ------------ | 0,1,2 | X | true |
+| `[X,X,X,N,N,N,N,N,N]` ------------ | 0,1,2 | O | false |
+| `[N,N,N,N,N,N,N,N,N]` ------------ | 0,1,2 | X | false |
+| `[X,X,O,N,N,N,N,N,N]` ------------ | 0,1,2 | X | false |
+| `[X,X,N,N,N,N,N,N,N]` ------------ | 0,1,2 | X | false |
+| `[N,N,X,N,X,N,X,N,N]` ------------ | 2,4,6 | X | true |
 
 **Fazer**
 
-- [ ] Escrever a operação (sem tocar em `gameTable`: ela só recebe o array).
-- [ ] Testar as 6 linhas da tabela com arrays montados à mão, guardando o retorno em variável e com rótulos.
-- [ ] Conferir que o array de teste **não** é alterado pela operação.
+Se ficar dentro de gameFlow e não for devolvida no return, precisarei executá-la dentro de outra função que existe no return, por exemplo: playGame. Caso haja no return, posso executá-la dali mesmo, o custo é que é uma operação a mais que poderia ser chamada com parâmetros fora da lista correta que é criada na closure. Deixarei pública durante os testes.
 
-**Conferir:** \_\_\_
+- [x] Escrever a operação (sem tocar em `gameTable`: ela só recebe o array).
+- [x] Testar as 6 linhas da tabela com arrays montados à mão, guardando o retorno em variável e com rótulos.
+- [x] Conferir que o array de teste **não** é alterado pela operação.
 
-**Explicar** (uma frase): por que testar com arrays montados à mão, em vez de jogar de verdade? \_\_\_
+**Conferir:** Tudo batendo corretamente.
+
+**Explicar** (uma frase): por que testar com arrays montados à mão, em vez de jogar de verdade? Para não precisar executar todo o código e alterar o gameTable que só será marcado durante o jogo.
 
 **Commit sugerido:** `verifica se uma combinação está completa`
 
