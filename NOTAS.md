@@ -8,7 +8,8 @@ Aqui ficam as perguntas, previsões, conferências e explicações de cada taref
 
 - [Plano](#plano)
 - [Fase 1 — Tabuleiro](#fase-1--tabuleiro): 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, fechamento
-- [Fase 2 — Jogadores e turnos](#fase-2--jogadores-e-turnos): 2.1, 2.2, 2.3, 2.4 (código funcionando; faltam testes e CONFERIR), 2.5 (roteiro pronto)
+- [Fase 2 — Jogadores e turnos](#fase-2--jogadores-e-turnos): 2.1, 2.2, 2.3, 2.4, 2.5 (concluídas)
+- [Fase 3 — Vitória e empate](#fase-3--vitória-e-empate): 3.1, 3.2, 3.3 (roteiros prontos), 3.4 a 3.8 (mapa)
 
 ---
 
@@ -445,7 +446,12 @@ Mais previsões:
 - [x] **2.5b** Recusas: rodada fora de andamento e casa recusada (a vez não muda).
 - [x] **2.5c** Testes da tabela acima, com rótulos e retornos guardados em variável.
 
-**Conferir:** Todas as previsões batem depois de serem executadas. Foi necessário incluir a verificação de status para ser === playing e a partir do momento que as jogadas foram chamadas, tudo bateu conforme o previsto.
+**Conferir:**
+
+1. Os cinco passos da tabela bateram (retorno, vez e casa), inclusive casa ocupada e posição 9: a jogada recusada devolve `false` e a vez não muda.
+2. Antes de registrar os jogadores, `playGame` quebrava com `TypeError` (`getPlayer()` é `null`) e, com a rodada em `"over"` ou `"waiting"`, ainda marcava o tabuleiro. Faltava o passo "c" da resposta 3: conferir o estado da rodada antes de marcar. Depois de incluir `getRoundStatus() === "playing"`, os dois casos devolvem `false` e o tabuleiro não é tocado.
+3. A ordem das condições do `&&` importa: com `getRoundStatus() === "playing"` primeiro, se a rodada não está em andamento o JavaScript nem avalia a segunda parte (curto-circuito), então `getPlayer().mark` não roda quando `getPlayer()` é `null`. Se eu invertesse, `getPlayer().mark` rodaria antes e quebraria com `TypeError` antes do registro.
+4. Uma previsão **não bateu** na primeira tentativa: com `gameFlow.roundStatus = "over"`, `playGame(3)` devolveu `true` e marcou a casa 3. Erro do teste, não do código: a atribuição cria uma propriedade nova no objeto `gameFlow` e não altera a variável `roundStatus` do closure (mesma causa do Teste 7 da 2.3). Usando `gameFlow.roundChange("over")`, devolve `false`, como previsto.
 
 **Explicar** (uma frase): por que a vez só passa depois de o tabuleiro aceitar a jogada? Pois conforme a regra de negócio do jogo, só se passa a vez do jogador quando ele fez uma jogada válida, que retorna true.
 
@@ -458,5 +464,163 @@ Mais previsões:
 - **`markPlayer` não valida o que recebe.** Se um dos argumentos for `null` (ou não tiver `.player()`), a linha `_playerX.player()` quebra com `TypeError: Cannot read properties of null`. Achado no Teste 6 da 2.3, quando `markPlayer(null, null)` derrubou o script. Pergunta: o que `markPlayer` deveria fazer com argumentos inválidos? Devolver `false` como a `mark`?
 - **Marcas duplicadas.** Nada impede registrar dois jogadores com a mesma marca (dois "X"). Aí `nextPlayer` não alterna direito. Pergunta: quem deve recusar isso, a factory, o `markPlayer` ou a interface?
 - **Marca que não é X nem O.** `nextPlayer` já devolve `false` nesse caso, mas o `markPlayer` aceita. Vale recusar na entrada.
+- **`roundChange` é pública.** `gameFlow.roundChange("playing")` antes de registrar os jogadores deixa o estado em `"playing"` com `getPlayer()` igual a `null`, e `playGame` volta a quebrar com `TypeError`. Hoje é só um truque de teste. Decidir depois quem pode mudar o estado (por exemplo, deixar de expor `roundChange` quando o controlador e a Fase 3 existirem).
 - **Nomes vazios.** Delegados à interface (Fase 5), mas conferir que o fluxo se comporta bem com `""`.
 - **Reiniciar a rodada.** Definir a operação que devolve a vez ao X e volta o estado para "não iniciada" ou "em andamento", e quem a chama junto com o `clear` do tabuleiro.
+
+---
+
+## Fase 3 — Vitória e empate
+
+**Objetivo:** o jogo completo no console, sem DOM. Você já tem tabuleiro, jogadores, vez, estado da rodada e `playGame`. Falta só **olhar o tabuleiro e responder**: alguém ganhou? deu velha?
+
+**Boa notícia:** esta fase é mais leve que a anterior. Quase não tem closure nem estado novo. É uma lista de dados + uma pergunta ("estas 3 casas são da mesma marca?") repetida 8 vezes. O estado da rodada (2.4) e o bloqueio em `"over"` (2.5) já existem e vão ser reaproveitados.
+
+**Mapa**
+
+| Tarefa | Em uma frase |
+| 3.1 | Guardar as 8 trincas de índices (só dados) |
+| 3.2 | Responder "esta trinca está completa para esta marca?" |
+| 3.3 | Responder "alguma das 8 trincas está completa?" (X e O) |
+| 3.4 a 3.8 | Empate, ordem das verificações, guardar resultado, bloquear, reiniciar (roteiros quando chegar a hora) |
+
+**Para fazer no papel antes de tudo:** desenhe o tabuleiro com os índices do array (é assim que o `gameTable` guarda as casas):
+
+```
+ 0 | 1 | 2
+---+---+---
+ 3 | 4 | 5
+---+---+---
+ 6 | 7 | 8
+```
+
+### 3.1 As 8 combinações vencedoras
+
+**Objetivo:** guardar em uma estrutura de dados as 8 trincas de índices que dão vitória. Só dados. Nenhuma lógica nesta tarefa.
+
+**Perguntas** (responda antes de digitar, usando o desenho acima)
+
+1. Escreva no papel os índices das 3 linhas, das 3 colunas e das 2 diagonais. Quais são?
+   - R: 0,1,2 / 0,3,6 / 0,4,8 / 3,4,5 / 1,4,7 / 6,7,8 / 2,5,8 / 2,4,6
+2. Que estrutura guarda uma lista de trincas? Compare: array de arrays, array de textos (`"012"`), um objeto com nomes (`linha1`, `coluna1`...). O que você vai fazer com ela depois? (Pense: percorrer as 8, e em cada uma olhar 3 casas.) Qual é mais fácil de usar?
+   - R: Uma array de arrays, cada uma guardando sua lista de trincas que depois será verificada com um forEach.
+3. Quantas trincas são? Some linhas + colunas + diagonais e confira com o que você escreveu.
+   - R: 8 trincas
+4. Onde mora essa lista? No `gameTable`, no `gameFlow` ou solta no arquivo? Pense: ela é fixa, ninguém deveria poder mudar. O que aconteceria se alguém de fora fizesse `.push` nela? (Lembre das 1.2 e 2.2: devolver o original x devolver cópia.)
+   - R: Penso que no gameFlow, pois a maior parte é gameFlow que executa e ela será verificada como true ou false para poder mudar estados, passar o jogador e etc.
+5. Dá para gerar as linhas e as colunas por código, ou é melhor escrever à mão? Qual é mais seguro para um tabuleiro 3x3 que nunca muda?
+   - R: Dá para gerar por código, mas é melhor digitá-la a mão pois são poucas combinações que não mudam.
+6. Nome da estrutura (mesmo idioma do restante):
+   - R: winArray
+
+**Prever** (preencha ANTES de rodar, olhando o desenho)
+
+| Pergunta ---------------------------------- | Resposta |
+| Em quantas trincas aparece a casa 4 (centro)? | 4 |
+| Em quantas trincas aparece a casa 0 (canto)? | 3 |
+| Em quantas trincas aparece a casa 1 (borda)? | 2 |
+| Alguma trinca repete um índice dentro dela? | Não |
+
+**Fazer**
+
+- [x] Criar a estrutura com as 8 trincas.
+- [x] Imprimir e conferir: são 8, cada uma tem 3 índices diferentes, todos entre 0 e 8.
+- [x] Decidir onde ela mora e como proteger de alteração por fora (resposta 4).
+
+**Conferir:** Fiz a conferência a partir do console.log e para todas as previsões as respostas estão corretas.
+
+**Explicar** (uma frase): por que guardar as combinações como dados, em vez de escrever um `if` para cada uma? Pois fica mais fácil de verificar uma array que 8 ifes e caso seja necessário escalar também fica mais fácil.
+
+**Commit sugerido:** `lista as combinações vencedoras`
+
+### 3.2 Uma trinca está completa?
+
+**Objetivo:** uma operação que recebe o tabuleiro, **uma** trinca e uma marca, e responde `true`/`false`: "as 3 casas desta trinca são todas dessa marca?". Ainda não percorre as 8 (isso é a 3.3).
+
+**Perguntas** (responda antes de digitar)
+
+1. O que a operação recebe e o que devolve? Liste os parâmetros e o tipo do retorno.
+   - R: \_\_\_
+2. Pergunta do TODO: três casas **vazias** (`null`) contam como vitória? Por quê? Pense: o que acontece se você só comparar as três casas entre si e todas forem `null`? (`null === null` dá o quê?)
+   - R: \_\_\_
+3. Duas formas de checar: (a) comparar as 3 casas entre si; (b) comparar cada casa com a marca esperada. Qual das duas evita o problema do `null`? Por quê?
+   - R: \_\_\_
+4. De onde vem o tabuleiro? `gameTable.table()` devolve uma cópia. Uma cópia serve para só **olhar**? Por quê não precisa do original?
+   - R: \_\_\_
+5. Esta operação precisa mudar alguma coisa (tabuleiro, vez, estado)? Ou só responde? O que isso diz sobre quem deve chamá-la?
+   - R: \_\_\_
+6. Nome da operação:
+   - R: \_\_\_
+
+**Prever** (preencha ANTES de rodar; monte os tabuleiros **à mão** em arrays, sem jogar. `N` = `null`)
+
+| Tabuleiro ------------------------ | Trinca | Marca | Devolve |
+| `[X,X,X,N,N,N,N,N,N]` ------------ | 0,1,2 | X | \_\_\_ |
+| `[X,X,X,N,N,N,N,N,N]` ------------ | 0,1,2 | O | \_\_\_ |
+| `[N,N,N,N,N,N,N,N,N]` ------------ | 0,1,2 | X | \_\_\_ |
+| `[X,X,O,N,N,N,N,N,N]` ------------ | 0,1,2 | X | \_\_\_ |
+| `[X,X,N,N,N,N,N,N,N]` ------------ | 0,1,2 | X | \_\_\_ |
+| `[N,N,X,N,X,N,X,N,N]` ------------ | 2,4,6 | X | \_\_\_ |
+
+**Fazer**
+
+- [ ] Escrever a operação (sem tocar em `gameTable`: ela só recebe o array).
+- [ ] Testar as 6 linhas da tabela com arrays montados à mão, guardando o retorno em variável e com rótulos.
+- [ ] Conferir que o array de teste **não** é alterado pela operação.
+
+**Conferir:** \_\_\_
+
+**Explicar** (uma frase): por que testar com arrays montados à mão, em vez de jogar de verdade? \_\_\_
+
+**Commit sugerido:** `verifica se uma combinação está completa`
+
+### 3.3 Alguma trinca está completa? (X e O)
+
+**Objetivo:** juntar as peças. Dado o tabuleiro e uma marca, responder se **alguma** das 8 trincas está completa para essa marca. Tem que funcionar para X e para O.
+
+**Perguntas** (responda antes de digitar)
+
+1. Que ferramenta de array responde "alguma destas satisfaz a condição?" e "todas estas satisfazem?". Procure no MDN: `Array.prototype.some` e `Array.prototype.every`. Qual faz o papel da 3.3 e qual faz o papel da 3.2?
+   - R: \_\_\_
+2. A operação sabe qual marca testar ou recebe de fora? Quem decide isso na jogada real? (Pense em quem acabou de jogar.)
+   - R: \_\_\_
+3. Devolve só `true`/`false`, ou também **qual** trinca venceu? A 3.6 vai precisar das posições vencedoras para pintar na tela. O que é melhor decidir **agora**, para não reescrever depois?
+   - R: \_\_\_
+4. Há algum jeito de X e O vencerem ao mesmo tempo no mesmo tabuleiro? E de testar só uma das marcas por jogada? Por quê basta testar a marca de quem acabou de jogar?
+   - R: \_\_\_
+5. Nome da operação:
+   - R: \_\_\_
+
+**Prever** (preencha ANTES de rodar; tabuleiros montados à mão)
+
+| Situação ----------------------------------- | Marca | Devolve |
+| Tabuleiro vazio ----------------------------- | X | \_\_\_ |
+| Uma linha completa de X -------------------- | X | \_\_\_ |
+| A mesma linha completa de X ---------------- | O | \_\_\_ |
+| Uma coluna completa de O ------------------- | O | \_\_\_ |
+| Uma diagonal completa de X ----------------- | X | \_\_\_ |
+| Duas casas de X em uma linha e a terceira O -- | X | \_\_\_ |
+
+**Fazer**
+
+- [ ] Escrever a operação usando a 3.1 e a 3.2.
+- [ ] Testar as 6 linhas acima com arrays montados à mão.
+- [ ] **Um teste para cada uma das 8 combinações**, para X **e** para O (16 casos). Pense em como montar os arrays sem escrever 16 vezes o mesmo código.
+
+**Conferir:** \_\_\_
+
+**Explicar** (uma frase): por que basta olhar a marca de quem acabou de jogar? \_\_\_
+
+**Commit sugerido:** `detecta vitória por marca`
+
+### 3.4 a 3.8 _(roteiros quando chegar a hora)_
+
+Só o mapa, com a pergunta que guia cada uma:
+
+- **3.4 Empate:** quando exatamente o jogo empata? "Tabuleiro cheio" basta? (Pense na 9ª jogada que também fecha uma linha.)
+- **3.5 Ordem das verificações:** o que checar primeiro, vitória ou empate? Vitória e empate podem ser anunciados juntos? Aqui entram os 4 cenários da tabela do TODO.
+- **3.6 Guardar o resultado e as posições vencedoras:** quem guarda? Como o resto do código lê sem poder alterar? (Closure, como na 2.2.)
+- **3.7 Bloquear jogadas depois do fim:** já está quase pronto. `playGame` já devolve `false` quando o estado não é `"playing"` (2.5). Falta só **quem muda o estado para `"over"`** quando alguém vence ou empata (`roundChange`).
+- **3.8 Reiniciar a rodada:** é a pendência "Reiniciar a rodada" da 2.5. Tabuleiro limpo, vez volta ao X, estado volta ao início, resultado apagado.
+
+Marco da Fase 3: jogar e reiniciar uma rodada inteira só pelo console.

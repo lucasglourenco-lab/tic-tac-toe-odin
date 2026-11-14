@@ -106,6 +106,21 @@ const gameFlow = (() => {
     return false;
   }
 
+  const winArray = [
+    [0, 1, 2],
+    [0, 3, 6],
+    [0, 4, 8],
+    [3, 4, 5],
+    [1, 4, 7],
+    [6, 7, 8],
+    [2, 5, 8],
+    [2, 4, 6],
+  ];
+
+  const getWinList = function () {
+    return structuredClone(winArray);
+  };
+
   return {
     getPlayer,
     markPlayer,
@@ -113,50 +128,13 @@ const gameFlow = (() => {
     getRoundStatus,
     roundChange,
     playGame,
+    getWinList,
   };
 })();
 
-// ---------- Fluxo do jogo (2.5) ----------
+// ------------------- Fase 3 ------------------------
+// tabuleiro => gameTable (table, mark e clear);
+// players => createPlayer;
+// fluxo do jogo => gameFlow (getPlayer, markPlayer, nextPlayer, getRoundStatus, roundChange, playGame e getWinList)
 
-// 2.5a
-
-let playerX = createPlayer("Lucas", "X");
-let playerO = createPlayer("Ana", "O");
-
-console.log(
-  "Chamo a operação antes de registrar os jogadores, retorna: ",
-  gameFlow.playGame(0),
-);
-
-gameFlow.markPlayer(playerX, playerO);
-
-console.log("Após a jogada na casa 0, devolve: " + gameFlow.playGame(0));
-console.log("Tabuleiro: " + gameTable.table());
-console.log("É a vez de: " + gameFlow.getPlayer().name);
-
-// 2.5b
-
-console.log(
-  "Após repetir a jogada na casa 0, devolve: " + gameFlow.playGame(0),
-);
-console.log("Tabuleiro: " + gameTable.table());
-console.log("É a vez de: " + gameFlow.getPlayer().name);
-
-// 2.5c
-console.log("Após a jogada na casa 4, devolve: " + gameFlow.playGame(4));
-console.log("Tabuleiro: " + gameTable.table());
-console.log("É a vez de: " + gameFlow.getPlayer().name);
-
-console.log("Após a jogada na casa 9 'fora', devolve: " + gameFlow.playGame(9));
-console.log("Tabuleiro: " + gameTable.table());
-console.log("É a vez de: " + gameFlow.getPlayer().name);
-
-console.log("Após a jogada na casa 8, devolve: " + gameFlow.playGame(8));
-console.log("Tabuleiro: " + gameTable.table());
-console.log("É a vez de: " + gameFlow.getPlayer().name);
-
-gameFlow.roundChange("over");
-console.log(
-  "Mudo o estado para over e chamo uma operação nova, retorna: ",
-  gameFlow.playGame(3),
-);
+console.log(gameFlow.getWinList());
