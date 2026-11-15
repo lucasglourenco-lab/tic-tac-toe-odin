@@ -34,3 +34,28 @@ const gameTable = (() => {
 
   return { read, mark, clear };
 })();
+
+// Factory de jogadores
+
+const createPlayer = function (_name, _symbol) {
+  if (_symbol !== "X" && _symbol !== "O") {
+    return false;
+  }
+
+  let name = _name;
+  let symbol = _symbol;
+
+  const read = function () {
+    return {
+      name,
+      symbol,
+    };
+  };
+
+  return { read };
+};
+
+let playerX = createPlayer("Lucas", "X");
+let playerO = createPlayer("Ana", "O");
+
+console.log(playerX.read(), playerO.read());
