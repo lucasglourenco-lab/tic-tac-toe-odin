@@ -15,7 +15,7 @@ Dois jogadores alternam marcando casas de um tabuleiro 3x3. Vence quem completar
 - [x] **1. Tabuleiro** (um módulo IIFE). Guarda 9 casas, cada vazia no início. Operações: ler o estado (sem entregar o array original), marcar uma casa (recusa casa ocupada ou posição inválida e avisa se aceitou) e limpar.
       _Conferir:_ marcar a mesma casa duas vezes; tentar `-1`, `9`, `"abc"`, `1.5`; alterar a cópia que você leu e ver se o tabuleiro mudou.
 - [x] **2. Jogadores** (factory). Cada um tem nome e marca (`X` ou `O`).
-- [ ] **3. Jogo** (módulo IIFE). Sabe de quem é a vez (X começa) e se a rodada acabou. A jogada marca no tabuleiro e só passa a vez se foi aceita.
+- [x] **3. Jogo** (módulo IIFE). Sabe de quem é a vez (X começa) e se a rodada acabou. A jogada marca no tabuleiro e só passa a vez se foi aceita.
       _Conferir:_ 4 jogadas pelo console, uma delas inválida, vendo de quem é a vez em cada uma.
 - [ ] **4. Vitória e empate.** Liste as 8 combinações vencedoras. Depois de cada jogada aceita: confira vitória, depois empate (se a 9ª jogada fecha uma linha, é vitória). Guarde o resultado e a combinação vencedora. Depois do fim, recuse jogadas. Faça reiniciar a rodada.
       _Conferir (X começa, alternam):_

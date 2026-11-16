@@ -39,7 +39,7 @@ const gameTable = (() => {
 
 const createPlayer = function (_name, _symbol) {
   if (_symbol !== "X" && _symbol !== "O") {
-    return false;
+    return 'The symbol needs to be "X" or "O"';
   }
 
   let name = _name;
@@ -73,13 +73,66 @@ const gameFlow = (() => {
       : (currentPlayer = playerX);
   };
 
+  let roundStatus = "waiting";
+
   const playRound = function (position) {
-    let currentSymbol = getPlayer().symbol;
-    if (gameTable.mark(position, currentSymbol)) {
-      changePlayer();
-      return true;
-    } else return false;
+    if (roundStatus === "waiting") {
+      let currentSymbol = getPlayer().symbol;
+
+      if (gameTable.mark(position, currentSymbol)) {
+        if (checkWin(currentSymbol)) {
+          roundStatus = "finished";
+          return "You win! The game has ended";
+        }
+        if (gameTable.read().every((i) => i !== null)) {
+          roundStatus = "finished";
+          return "It's even";
+        }
+
+        changePlayer();
+        return "The next player should play";
+      } else return "The round was not accepted";
+    }
+    return "The game is end";
   };
 
-  return { getPlayer, playRound };
+  const winArray = [
+    [0, 1, 2],
+    [0, 3, 6],
+    [0, 4, 8],
+    [1, 4, 7],
+    [2, 5, 8],
+    [2, 4, 6],
+    [3, 4, 5],
+    [6, 7, 8],
+  ];
+
+  const checkWin = function (symbolCompared) {
+    const table = gameTable.read();
+
+    for (const arr of winArray) {
+      if (
+        table[arr[0]] === symbolCompared &&
+        table[arr[1]] === symbolCompared &&
+        table[arr[2]] === symbolCompared
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const restartGame = function () {
+    gameTable.clear();
+    roundStatus = "waiting";
+    currentPlayer = playerX;
+  };
+
+  const getRoundStatus = function () {
+    return roundStatus;
+  };
+
+  return { getPlayer, playRound, restartGame, getRoundStatus };
 })();
+
+// Passo 4 - Checagem de Vitória/Derrota ou Velha. --- O Maior de todos.
