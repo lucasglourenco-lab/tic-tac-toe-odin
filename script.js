@@ -58,42 +58,39 @@ const createPlayer = function (_name, _symbol) {
 // Controle do jogo - passo 3 (IIFE)
 
 const gameFlow = (() => {
-  const playerX = createPlayer("Lucas", "X").read();
-  const playerO = createPlayer("Ana", "O").read();
+  let playerX = createPlayer("Lucas", "X");
+  let playerO = createPlayer("Ana", "O");
 
   let currentPlayer = playerX;
+  let roundStatus = "waiting";
 
   const getPlayer = function () {
     return { ...currentPlayer };
   };
 
   const changePlayer = function () {
-    currentPlayer === playerX
-      ? (currentPlayer = playerO)
-      : (currentPlayer = playerX);
+    if (getRoundStatus() === "waiting") {
+      currentPlayer === playerX
+        ? (currentPlayer = playerO)
+        : (currentPlayer = playerX);
+    }
   };
-
-  let roundStatus = "waiting";
 
   const playRound = function (position) {
     if (roundStatus === "waiting") {
-      let currentSymbol = getPlayer().symbol;
+      let currentSymbol = getPlayer().read().symbol;
 
       if (gameTable.mark(position, currentSymbol)) {
         if (checkWin(currentSymbol)) {
           roundStatus = "finished";
-          return "You win! The game has ended";
         }
         if (gameTable.read().every((i) => i !== null)) {
           roundStatus = "finished";
-          return "It's even";
         }
 
         changePlayer();
-        return "The next player should play";
-      } else return "The round was not accepted";
+      }
     }
-    return "The game is end";
   };
 
   const winArray = [
@@ -116,10 +113,11 @@ const gameFlow = (() => {
         table[arr[1]] === symbolCompared &&
         table[arr[2]] === symbolCompared
       ) {
-        return true;
+        let winner = arr;
+        console.log(winner);
+        roundStatus = "finished";
       }
     }
-    return false;
   };
 
   const restartGame = function () {
@@ -135,4 +133,65 @@ const gameFlow = (() => {
   return { getPlayer, playRound, restartGame, getRoundStatus };
 })();
 
-// Passo 4 - Checagem de Vitória/Derrota ou Velha. --- O Maior de todos.
+// Passo 5 - Tela.
+
+const board = (() => {
+  const boardNode = Array.from(document.querySelectorAll("#board button"));
+  const restartBtn = document.querySelector("#restartGame");
+
+  const finishGame = function () {
+    boardNode.forEach((el) => (el.disabled = true));
+    restartBtn.disabled = false;
+  };
+
+  restartBtn.addEventListener("click", () => {
+    gameFlow.restartGame();
+    render();
+    restartBtn.disabled = true;
+  });
+
+  boardNode.forEach((el) => {
+    el.addEventListener("click", (e) => {
+      const currentHouse = +e.currentTarget.dataset.index;
+      gameFlow.playRound(currentHouse);
+      render();
+      activatePlayerCard();
+    });
+  });
+
+  const render = function () {
+    const table = gameTable.read();
+    boardNode.forEach((el) => (el.disabled = false));
+    boardNode.forEach((el, i) => {
+      el.textContent = table[i];
+      if (table[i] === null) {
+        el.removeAttribute("data-mark");
+      } else {
+        el.dataset.mark = table[i];
+        el.disabled = true;
+      }
+
+      const linha = i > 5 ? 3 : i > 2 ? 2 : 1;
+      const coluna = i % 3 === 0 ? 1 : i % 3 === 1 ? 2 : 3;
+      el.ariaLabel = `Linha ${linha}, coluna ${coluna}, marca ${table[i] === null ? "nenhuma" : table[i]}`;
+    });
+    if (gameFlow.getRoundStatus() === "finished") {
+      finishGame();
+    }
+  };
+  const card = document.querySelectorAll(".player-card");
+
+  const activatePlayerCard = function () {
+    card.forEach((item) => (item.dataset.active = false));
+    let playerTime = gameFlow.getPlayer();
+    card.forEach((i) => {
+      if (i.querySelector("span").textContent === playerTime.read().symbol) {
+        i.dataset.active = true;
+      }
+    });
+  };
+
+  render();
+  activatePlayerCard();
+  return { render, activatePlayerCard };
+})();
